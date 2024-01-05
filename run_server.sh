@@ -2,15 +2,17 @@
 
 set -e
 
-# install poetry
-# pip3 install poetry
+# Activate Poetry environment
+source "$(poetry env info --path)/bin/activate"
 
-# install dependencies
-poetry shell
+# Install dependencies
 poetry install
 
-# run server
+# Run server
 poetry run python -m uvicorn api.index:app \
     --host $API_HOST \
     --port $API_PORT \
     --reload
+
+# Deactivate Poetry environment
+deactivate
