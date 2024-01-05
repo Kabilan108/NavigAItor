@@ -3,7 +3,7 @@
 set -e
 
 # install poetry
-pip3 install poetry
+# pip3 install poetry
 
 # install dependencies
 poetry shell
