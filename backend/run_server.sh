@@ -6,7 +6,7 @@ set -e
 source "$(poetry env info --path)/bin/activate"
 
 # Install dependencies
-poetry install
+poetry install --no-root
 
 # Run server
 poetry run python -m uvicorn api.index:app \
