@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
 import { TailwindIndicator } from "@/components/tailwind-indicators";
 
-export const fontSans = FontSans({
+const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
