@@ -12,8 +12,8 @@ const fontSans = FontSans({
 
 export const metadata = {
   title: {
-    default: "llminate",
-    template: `%s | llminate`,
+    default: "NavigAItor",
+    template: `%s | NavigAItor`,
   },
   description: "As",
   keywords: ["Study tool", "AI", "LLM", "Multimodal", "Homework"],
