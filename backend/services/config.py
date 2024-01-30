@@ -10,13 +10,8 @@ DATA_DIR = "/data"
 MODEL_DIR = "/models"
 WHISPER_MODEL = "openai/whisper-large-v3"
 
-
-def get_logger():
-    """Return logger"""
-
-    logger.add(
-        sink=sys.stdout,
-        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}",
-        level="INFO",
-    )
-    return logger
+logger.add(
+    sink=sys.stdout,
+    format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}",
+    level="INFO",
+)
