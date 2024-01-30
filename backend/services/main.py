@@ -12,13 +12,11 @@ from modal import (
     gpu,
 )
 
-from .config import get_logger
+from .config import logger
 from . import config, utils
 
 
-GPU_CONFIG = gpu.A100()
-
-logger = get_logger()
+GPU_CONFIG = gpu.T4()
 
 model_volume = Volume.persisted("NavigAItor-inference-models")
 data_volume = Volume.persisted("NavigAItor-inference-data")
@@ -42,16 +40,18 @@ whisper_image = (
         "ffmpeg-python==0.2.0",
         "optimum",
         "accelerate",
+        "pandas",
     )
 )
 
 stub = Stub("NavigAItor-inference")
 
-stub.in_progress = Dict.new()
+stub.jobs = Dict.new()
 
 
 @stub.function(
     image=api_image,
+    volumes={config.DATA_DIR: data_volume},
     secret=Secret.from_name("NavigAItor-inference-secrets"),
 )
 @asgi_app()
@@ -69,13 +69,13 @@ def fastapi_app():
 )
 def download_model():
     """Save the model to the modal volume"""
+
     _ = utils.load_whisper_pipeline()
     model_volume.commit()
 
 
 @stub.function(
-    # gpu=GPU_CONFIG,
-    gpu=gpu.T4(),
+    gpu=GPU_CONFIG,
     image=whisper_image,
     volumes={
         config.MODEL_DIR: model_volume,
@@ -83,13 +83,26 @@ def download_model():
     },
     secret=Secret.from_name("NavigAItor-inference-secrets"),
 )
-def transcribe():
-    """Transcribe an audio file"""
+def transcribe(audiofile: str) -> dict:
+    """Transcribe an audio file
 
-    audiofile = f"{config.DATA_DIR}/ben-shapiro-clip.wav"
+    @param audiofile: path to audio file. must be a wav file stored in the data volume
+    """
+
+    data_volume.reload()
+
+    logger.info(f"Starting transcription job for {audiofile}")
 
     pipeline = utils.load_whisper_pipeline()
-
     segments = utils.transcribe(pipeline, audiofile)
 
-    print(segments)
+    logger.info(f"Finished transcription job for {audiofile}")
+
+    for i, chk in enumerate(segments["chunks"]):
+        segments["chunks"][i] = {
+            "start": chk["timestamp"][0],
+            "end": chk["timestamp"][1],
+            "text": chk["text"],
+        }
+
+    return {"text": segments["text"], "timestamps": segments["chunks"]}
