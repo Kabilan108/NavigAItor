@@ -13,6 +13,8 @@ transformers = "^4.36.2"
 pydantic = "^2.6.0"
 modal = "^0.56.4844"
 loguru = "^0.7.2"
+torch = "^2.1.2"
+ffmpeg-python = "^0.2.0"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
