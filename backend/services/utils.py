@@ -1,4 +1,6 @@
 # services/utils.py
+#
+# Utility functions for NavigAItor inference service
 
 from fastapi import UploadFile
 
