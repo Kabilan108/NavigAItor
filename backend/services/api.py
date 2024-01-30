@@ -33,6 +33,7 @@ class RunningJob(NamedTuple):
     start_time: int
 
 
+# TODO: make this also accept a URL to a file
 @app.post("/transcribe")
 async def transcribe_job(
     file: UploadFile = File(...),
