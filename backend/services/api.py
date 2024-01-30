@@ -57,7 +57,7 @@ async def transcribe_job(
 
         if isinstance(job, RunningJob) and (now - job.start_time) < MAX_JOB_AGE_SECS:
             call_id = job.call_id
-            utils.logger.info(
+            logger.info(
                 f"Found existing, unexpired job for {filename}. Returning call_id {call_id}."
             )
             return {"call_id": call_id}
