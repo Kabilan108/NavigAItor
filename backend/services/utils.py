@@ -1,17 +1,42 @@
-# services/config.py
-#
-# Configuration for the Modal service.
+# services/utils.py
 
-from loguru import logger
-import sys
+from . import config
 
 
-def get_logger():
-    """Return logger"""
+def load_whisper_pipeline():
+    """Load the Whisper ASR pipeline"""
 
-    logger.add(
-        sink=sys.stdout,
-        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}",
-        level="INFO",
+    from transformers import pipeline
+    import torch
+
+    gpu = torch.cuda.is_available()
+    device = "cuda" if gpu else "cpu"
+
+    pipeline = pipeline(
+        "automatic-speech-recognition",
+        model=config.WHISPER_MODEL,
+        torch_dtype=torch.float16 if gpu else torch.int8,
+        device=device,
     )
-    return logger
+
+    return pipeline
+
+
+def transcribe(pipe, audiofile):
+    """Transcribe an audio file"""
+
+    import torch
+
+    segments = pipe(
+        audiofile,
+        chunk_length_s=30,
+        batch_size=12,
+        return_timestamps=True,
+        generate_kwargs={
+            "task": "transcribe",
+            "language": "en",
+        },
+    )
+    torch.cuda.empty_cache()
+
+    return segments
