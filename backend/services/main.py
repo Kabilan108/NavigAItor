@@ -106,3 +106,8 @@ def transcribe(audiofile: str) -> dict:
         }
 
     return {"text": segments["text"], "timestamps": segments["chunks"]}
+
+
+# TODO: periodically clean up old jobs
+
+# TODO: periodically clear out old data in the data volume
