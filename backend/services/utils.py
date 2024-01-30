@@ -1,5 +1,10 @@
 # services/utils.py
 
+from fastapi import UploadFile
+
+import shutil
+import os
+
 from . import config
 
 
@@ -40,3 +45,13 @@ def transcribe(pipe, audiofile):
     torch.cuda.empty_cache()
 
     return segments
+
+
+def save_file(file: UploadFile):
+    """Write uploaded file to disk"""
+
+    path = f"{config.DATA_DIR}/{file.filename}"
+    with open(path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    return path, os.path.basename(path)
