@@ -35,8 +35,8 @@ h6 {
     --muted: #f5f5f5;
     --muted-foreground: #737373;
 
-    --accent: #f5f5f5;
-    --accent-foreground: #171717;
+    --accent: #edf4ff;
+    --accent-foreground: #ffb6b6;
 
     --destructive: #993366;
     --destructive-foreground: #fafafa;
@@ -52,7 +52,7 @@ h6 {
     --background: #0a0a0a;
     --foreground: #fafafa;
 
-    --card: #0a0a0a;
+    --card: #1a1a1a;
     --card-foreground: #fafafa;
 
     --popover: #0a0a0a;
@@ -67,8 +67,8 @@ h6 {
     --muted: #262626;
     --muted-foreground: #a3a3a3;
 
-    --accent: #262626;
-    --accent-foreground: #fafafa;
+    --accent: #ffc2c2;
+    --accent-foreground: #ff6b6b;
 
     --destructive: #4d1a33;
     --destructive-foreground: #fafafa;
