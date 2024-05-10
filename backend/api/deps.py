@@ -10,12 +10,12 @@ def get_settings():
 
 
 def get_db_sync(settings: Settings = Depends(get_settings)) -> MongoClient:
-    client = MongoClient(settings.db.MONGO_URI)
-    db = client[settings.db.MONGO_DB]
+    client = MongoClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB]
     return db
 
 
 async def get_db(settings: Settings = Depends(get_settings)) -> AsyncIOMotorClient:
-    client = AsyncIOMotorClient(settings.db.MONGO_URI)
-    db = client[settings.db.MONGO_DB]
+    client = AsyncIOMotorClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB]
     return db
