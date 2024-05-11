@@ -1,12 +1,14 @@
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import APIRouter, Request, HTTPException, Depends
 from authlib.integrations.starlette_client import OAuthError
 from fastapi.responses import RedirectResponse
 
+from core.auth import oauth, authenticate_user, create_access_token, get_current_user
 from api.deps import get_db, get_settings, AsyncIOMotorClient, Settings
-from schema.auth import OAuthUser, OAuthUserInDB
-from core.auth import oauth, get_or_create_user
+from schema.auth import OAuthUser, OAuthUserInDB, User
 
 router = APIRouter()
+auth_scheme = HTTPBearer()
 
 
 @router.get("/login", name="login")
@@ -22,18 +24,30 @@ async def token(
     db: AsyncIOMotorClient = Depends(get_db),
 ) -> RedirectResponse:
     try:
-        token = await oauth.google.authorize_access_token(request)
+        google_token = await oauth.google.authorize_access_token(request)
+        user_info = OAuthUser(**google_token.get("userinfo"))
+
+        user: OAuthUserInDB = await authenticate_user(db, user_info)
+        token = create_access_token(sub=user.sub)
+
+        redirect_url = f"{settings.CLIENT_URL}/app#token={token}"
+        return RedirectResponse(url=redirect_url)
     except OAuthError as e:
         raise HTTPException(status_code=400, detail=f"Failed to authenticate user: {e}")
-
-    user_info = OAuthUser(**token.get("userinfo"))
-    user: OAuthUserInDB = await get_or_create_user(db, user_info)
-    request.session["user"] = user.model_dump()
-
-    return RedirectResponse(url=f"{settings.CLIENT_URL}/app")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to authenticate user: {e}")
 
 
-@router.get("/logout", name="logout")
-async def logout(request: Request, settings: Settings = Depends(get_settings)):
-    request.session.pop("user", None)
-    return RedirectResponse(url=settings.CLIENT_URL)
+@router.get("/user", name="user", response_model=User)
+async def user(
+    token: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+    db: AsyncIOMotorClient = Depends(get_db),
+):
+    if token is None:
+        raise HTTPException(
+            status_code=401,
+            detail="No authentication token provided",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user = await get_current_user(token.credentials, db)
+    return {"user": user}

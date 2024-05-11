@@ -30,3 +30,7 @@ class OAuthUserInDB(OAuthUser):
     @field_serializer("created_at", "last_login")
     def serialize_date_time(self, v):
         return v.isoformat()
+
+
+class User(BaseModel):
+    user: OAuthUserInDB | int | None = None

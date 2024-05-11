@@ -24,7 +24,10 @@ class Settings(BaseSettings):
     MONGO_URI: str
     MONGO_DB: str
 
+    AUTH_SECRET_KEY: str
+    AUTH_ALGORITHM: str
     SESSION_TOKEN: str
+    # COOKIE_DOMAIN: str | None = None
 
     class Config:
         case_sensitive = True
