@@ -16,6 +16,7 @@ interface AuthContextState {
   loading: boolean;
   login: () => void;
   logout: () => void;
+  saveToken: () => void;
 }
 
 export const AuthContext = createContext<AuthContextState>({
@@ -23,6 +24,7 @@ export const AuthContext = createContext<AuthContextState>({
   loading: true,
   login: () => {},
   logout: async () => {},
+  saveToken: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -31,14 +33,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<AuthContextState["user"]>(undefined);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  function saveToken() {
     const token = new URL(window.location.href).hash.split("=")[1];
+    console.log("token", token);
+
     if (token) {
       localStorage.setItem("token", token);
       window.location.hash = "";
-      console.log("token", token);
     }
+  }
 
+  useEffect(() => {
+    saveToken();
+  }, []);
+
+  useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
@@ -49,8 +58,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             },
           },
         );
-        console.log("response", response);
-        // const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/user`, { withCredentials: true })
         if (response.data.user === 0) {
           setUser(undefined);
           return;
@@ -84,6 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     loading,
     login,
     logout,
+    saveToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

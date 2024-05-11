@@ -7,10 +7,17 @@ import "@/pages/App.css";
 
 function MainApp() {
   const [count, setCount] = useState(0);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (user == undefined) {
+  // redirect only after loading
+  if (!loading && user === undefined) {
+    console.log("not logged in");
     return <Navigate to="/login" />;
+  }
+
+  // render the rest of the component only after loading
+  if (loading || user === undefined) {
+    return <div>Loading...</div>;
   }
 
   return (
