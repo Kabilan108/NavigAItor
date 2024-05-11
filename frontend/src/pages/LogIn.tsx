@@ -1,16 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Icons } from "@/components/icons";
+import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import { Icons } from "@/components/icons";
+import { useAuth } from "@/lib/context";
 
 export default function LoginPage() {
-  // handle google sign in
+  const { user, login } = useAuth();
+
+  if (user !== undefined) {
+    return <Navigate to="/app" />;
+  }
+
   const handleGoogleSignIn = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-      );
-      console.log(`Login success: ${response.data}`);
+      login();
     } catch (error) {
       console.error(`Login failed: ${error}`);
     }
@@ -24,11 +27,6 @@ export default function LoginPage() {
           <CardTitle className="text-3xl">Sign In</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div className="grid gap-6">
-            <Button variant="outline" className="w-full">
-              <Icons.twitter className="mr-2 h-5 w-5" />
-            </Button>
-          </div>
           <div className="grid gap-6">
             <Button
               variant="outline"
