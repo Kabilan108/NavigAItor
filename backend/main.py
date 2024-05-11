@@ -16,7 +16,6 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# TODO: Use a secure secret key
 app.add_middleware(SessionMiddleware, secret_key=settings.SESSION_TOKEN)
 
 if settings.CLIENT_URL:
