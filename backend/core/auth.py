@@ -47,6 +47,14 @@ def create_access_token(*, sub: str) -> str:
     )
 
 
+def create_refresh_token(*, sub: str) -> str:
+    return _create_token(
+        token_type="refresh_token",
+        lifetime=timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        sub=sub,
+    )
+
+
 async def authenticate_user(
     db: AsyncIOMotorClient, user_info: OAuthUser
 ) -> OAuthUserInDB:
@@ -70,24 +78,47 @@ async def authenticate_user(
         return user
 
 
-async def get_current_user(access_token: str, db: AsyncIOMotorClient) -> OAuthUserInDB:
-    def credential_exception(e: Exception):
-        return HTTPException(
-            status_code=401,
-            detail=f"Unauthorized: {e}",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+def credential_exception(status_code: int, detail: str):
+    return HTTPException(
+        status_code=status_code,
+        detail=detail,
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
+
+async def get_current_user(access_token: str, db: AsyncIOMotorClient) -> OAuthUserInDB:
     try:
         payload = jwt.decode(
-            access_token, settings.AUTH_SECRET_KEY, algorithms=[settings.AUTH_ALGORITHM]
+            access_token,
+            settings.AUTH_SECRET_KEY,
+            algorithms=[settings.AUTH_ALGORITHM],
         )
         sub = payload.get("sub")
         if not sub:
-            raise credential_exception("JWT sub is not found")
+            raise credential_exception(401, "Invalid access token")
         user = await db.users.find_one({"sub": sub})
         if not user:
-            raise credential_exception("User not found")
+            raise credential_exception(401, "User not found")
         return OAuthUserInDB(**user)
     except JWTError as e:
-        raise credential_exception(e)
+        raise credential_exception(401, str(e))
+
+
+async def get_new_access_token(refresh_token: str, db: AsyncIOMotorClient) -> str:
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            settings.AUTH_SECRET_KEY,
+            algorithms=[settings.AUTH_ALGORITHM],
+        )
+        sub = payload.get("sub")
+        if not sub:
+            raise credential_exception(400, "Invalid refresh token")
+
+        user = await db.users.find_one({"sub": sub})
+        if not user:
+            raise credential_exception(400, "User not found")
+
+        return create_access_token(sub=sub)
+    except JWTError:
+        raise credential_exception(400, "Invalid refresh token")

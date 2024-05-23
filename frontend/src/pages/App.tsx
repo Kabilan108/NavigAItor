@@ -2,10 +2,11 @@ import { useState } from "react";
 import reactLogo from "@/assets/react.svg";
 import viteLogo from "/vite.svg";
 import { useAuth } from "@/lib/context";
+import LoadingSpinner from "@/components/ui/loading-spinner";
 import { Navigate } from "react-router-dom";
 import "@/pages/App.css";
 
-function MainApp() {
+export default function MainApp() {
   const [count, setCount] = useState(0);
   const { user, loading } = useAuth();
 
@@ -17,7 +18,7 @@ function MainApp() {
 
   // render the rest of the component only after loading
   if (loading || user === undefined) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -45,5 +46,3 @@ function MainApp() {
     </>
   );
 }
-
-export default MainApp;

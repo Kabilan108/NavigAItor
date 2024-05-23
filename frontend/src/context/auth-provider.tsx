@@ -16,7 +16,7 @@ interface AuthContextState {
   loading: boolean;
   login: () => void;
   logout: () => void;
-  saveToken: () => void;
+  saveTokens: () => void;
 }
 
 export const AuthContext = createContext<AuthContextState>({
@@ -24,7 +24,7 @@ export const AuthContext = createContext<AuthContextState>({
   loading: true,
   login: () => {},
   logout: async () => {},
-  saveToken: () => {},
+  saveTokens: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -33,18 +33,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<AuthContextState["user"]>(undefined);
   const [loading, setLoading] = useState(true);
 
-  function saveToken() {
-    const token = new URL(window.location.href).hash.split("=")[1];
-    console.log("token", token);
+  function saveTokens() {
+    const hash = new URL(window.location.href).hash;
+    const params = new URLSearchParams(hash.slice(1));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
 
-    if (token) {
-      localStorage.setItem("token", token);
+    if (accessToken && refreshToken) {
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
       window.location.hash = "";
     }
   }
 
   useEffect(() => {
-    saveToken();
+    saveTokens();
   }, []);
 
   useEffect(() => {
@@ -54,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           `${import.meta.env.VITE_API_URL}/auth/user`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
           },
         );
@@ -63,11 +66,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           return;
         } else {
           setUser(response.data.user);
-          console.log("User fetched:", response.data.user);
         }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        setUser(undefined);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          try {
+            if (!localStorage.getItem("refreshToken")) {
+              setUser(undefined);
+              return;
+            } else {
+              const refreshResponse = await axios.post(
+                `${import.meta.env.VITE_API_URL}/auth/refresh`,
+                {
+                  refresh_token: localStorage.getItem("refreshToken"),
+                },
+              );
+              localStorage.setItem(
+                "accessToken",
+                refreshResponse.data.access_token,
+              );
+              await fetchUser();
+            }
+          } catch (refreshError) {
+            console.error("Failed to refresh token:", refreshError);
+            setUser(undefined);
+          }
+        } else {
+          console.error("Failed to fetch user:", error);
+          setUser(undefined);
+        }
       } finally {
         setLoading(false);
       }
@@ -81,7 +107,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     setUser(undefined);
     window.location.href = "/";
   };
@@ -91,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     loading,
     login,
     logout,
-    saveToken,
+    saveTokens,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     # SECRET_KEY: str
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int | None = 60 * 24 * 8
+    REFRESH_TOKEN_EXPIRE_DAYS: int | None = 7
     ALGORITHM: str | None = "HS256"
 
     CLIENT_URL: str = "http://localhost:3000"

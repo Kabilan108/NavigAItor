@@ -33,4 +33,4 @@ class OAuthUserInDB(OAuthUser):
 
 
 class User(BaseModel):
-    user: OAuthUserInDB | int | None = None
+    user: OAuthUserInDB | None = None
