@@ -1,7 +1,7 @@
 from rich.console import Console
 import asyncio
 
-from api.deps import get_db, AsyncIOMotorClient
+from services.mongo import get_db, AsyncIOMotorClient
 from core.config import settings
 
 

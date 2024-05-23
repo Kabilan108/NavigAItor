@@ -1,13 +1,14 @@
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
+import logfire
 
 import time
 
-from core.config import settings, setup_logging
+from core.config import settings
 from api import api_router
 
-setup_logging(settings)
+
 app = FastAPI(
     title="navigAItor-server",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
@@ -26,6 +27,9 @@ if settings.CLIENT_URL:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+logfire.configure(token=settings.LOGFIRE_TOKEN)
+logfire.instrument_fastapi(app)
 
 
 @app.middleware("http")

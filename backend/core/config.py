@@ -28,11 +28,17 @@ class Settings(BaseSettings):
     AUTH_SECRET_KEY: str
     AUTH_ALGORITHM: str
     SESSION_TOKEN: str
-    # COOKIE_DOMAIN: str | None = None
+    COOKIE_DOMAIN: str | None = None
+
+    AWS_ACCESS_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
+    AWS_REGION: str
+    AWS_BUCKET: str
+
+    LOGFIRE_TOKEN: str
 
     class Config:
         case_sensitive = True
-        # env_file = ROOT / ".env"
 
 
 def setup_logging(settings: Settings):
@@ -51,6 +57,10 @@ def setup_logging(settings: Settings):
             }
         ]
     )
+
+
+def get_settings():
+    return Settings()
 
 
 settings = Settings()

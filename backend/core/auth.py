@@ -1,14 +1,16 @@
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from authlib.integrations.starlette_client import OAuth
-from fastapi import HTTPException
 from starlette.config import Config
 from jose import jwt, JWTError
+from fastapi import Depends
 
 from datetime import datetime, timedelta
 from typing import MutableMapping
 
-from schema.auth import OAuthUser, OAuthUserInDB
+from schema.auth import OAuthUser, OAuthUserInDB, raise_auth_failure
 from api.deps import AsyncIOMotorClient
 from core.config import ROOT, settings
+from services import mongo
 
 config = Config(ROOT / ".env")
 oauth = OAuth(config)
@@ -21,6 +23,7 @@ oauth.register(
 )
 
 JWTPayLoad = MutableMapping[str, datetime | bool | str | list[str] | list[int]]
+auth_scheme = HTTPBearer()
 
 
 def _create_token(
@@ -78,30 +81,25 @@ async def authenticate_user(
         return user
 
 
-def credential_exception(status_code: int, detail: str):
-    return HTTPException(
-        status_code=status_code,
-        detail=detail,
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-
-async def get_current_user(access_token: str, db: AsyncIOMotorClient) -> OAuthUserInDB:
+async def get_current_user(
+    access_token: HTTPAuthorizationCredentials = Depends(auth_scheme),
+    db: mongo.AsyncClient = Depends(mongo.get_db),
+) -> OAuthUserInDB:
     try:
         payload = jwt.decode(
-            access_token,
+            access_token.credentials,
             settings.AUTH_SECRET_KEY,
             algorithms=[settings.AUTH_ALGORITHM],
         )
         sub = payload.get("sub")
         if not sub:
-            raise credential_exception(401, "Invalid access token")
+            raise_auth_failure("Invalid access token")
         user = await db.users.find_one({"sub": sub})
         if not user:
-            raise credential_exception(401, "User not found")
+            raise_auth_failure("User not found")
         return OAuthUserInDB(**user)
     except JWTError as e:
-        raise credential_exception(401, str(e))
+        raise_auth_failure(str(e))
 
 
 async def get_new_access_token(refresh_token: str, db: AsyncIOMotorClient) -> str:
@@ -113,12 +111,12 @@ async def get_new_access_token(refresh_token: str, db: AsyncIOMotorClient) -> st
         )
         sub = payload.get("sub")
         if not sub:
-            raise credential_exception(400, "Invalid refresh token")
+            raise_auth_failure("Invalid refresh token")
 
         user = await db.users.find_one({"sub": sub})
         if not user:
-            raise credential_exception(400, "User not found")
+            raise_auth_failure("User not found")
 
         return create_access_token(sub=sub)
     except JWTError:
-        raise credential_exception(400, "Invalid refresh token")
+        raise_auth_failure("Invalid refresh token")
