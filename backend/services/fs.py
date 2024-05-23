@@ -25,11 +25,12 @@ def generate_file_name(file_name: str) -> str:
     return f"{uuid.uuid4()}.{ext}"
 
 
+# TODO: use folders: user_id/conversation_id/file_id
 async def upload_file(
-    file: UploadFile,
-    bucket: str,
     user_id: str,
     conversation_id: str,
+    bucket: str,
+    file: UploadFile,
     client: Client,
     db: mongo.AsyncClient,
 ):
@@ -70,8 +71,8 @@ async def find_file(file_id: str, user_id: str, db: mongo.AsyncClient) -> FileIn
 
 
 async def delete_file(
-    file_id: str,
     user_id: str,
+    file_id: str,
     bucket: str,
     client: Client,
     db: mongo.AsyncClient,
@@ -81,3 +82,9 @@ async def delete_file(
     client.delete_object(Bucket=bucket, Key=file.s3_key)
     await db.files.delete_one({"_id": ObjectId(file_id)})
     return {"message": "File deleted"}
+
+
+async def list_files(user_id: str, db: mongo.AsyncClient) -> list[FileInDB]:
+    """List files for user"""
+    files = await db.files.find({"user_id": user_id}).to_list(None)
+    return [FileInDB(**file) for file in files]
