@@ -19,13 +19,13 @@ def create_s3_client(settings: Settings = Depends(get_settings)) -> Client:
     )
 
 
-def generate_file_name(file_name: str) -> str:
+def generate_file_name(user_id: str, file_name: str) -> str:
     """Generate unique file name"""
     ext = file_name.split(".")[-1]
-    return f"{uuid.uuid4()}.{ext}"
+    return f"{user_id}/{uuid.uuid4()}.{ext}"
 
 
-# TODO: use folders: user_id/conversation_id/file_id
+# TODO: use folders: user_id/file_id
 async def upload_file(
     user_id: str,
     conversation_id: str,
@@ -36,7 +36,7 @@ async def upload_file(
 ):
     """Create file metadata"""
 
-    s3_key = generate_file_name(file.filename)
+    s3_key = generate_file_name(user_id, file.filename)
 
     try:
         client.upload_fileobj(file.file, bucket, s3_key)
@@ -60,7 +60,7 @@ async def upload_file(
     return file
 
 
-async def find_file(file_id: str, user_id: str, db: mongo.AsyncClient) -> FileInDB:
+async def get_file(file_id: str, user_id: str, db: mongo.AsyncClient) -> FileInDB:
     """Find file by id"""
     file = await db.files.find_one({"_id": ObjectId(file_id)})
     if not file:
@@ -78,7 +78,7 @@ async def delete_file(
     db: mongo.AsyncClient,
 ) -> dict:
     """Delete file from S3"""
-    file = await find_file(file_id, user_id, db)
+    file = await get_file(file_id, user_id, db)
     client.delete_object(Bucket=bucket, Key=file.s3_key)
     await db.files.delete_one({"_id": ObjectId(file_id)})
     return {"message": "File deleted"}

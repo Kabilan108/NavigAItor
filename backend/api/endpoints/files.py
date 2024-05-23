@@ -48,9 +48,18 @@ async def delete_file(
     )
 
 
-@router.post("/list")
+@router.get("/list")
 async def list_files(
     user: OAuthUserInDB = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> list[FileInDB]:
     return await fs.list_files(user_id=user.id, db=db)
+
+
+@router.get("/{file_id}")
+async def get_file(
+    file_id: str,
+    user: OAuthUserInDB = Depends(get_current_user),
+    db: mongo.AsyncClient = Depends(mongo.get_db),
+) -> FileInDB:
+    return await fs.get_file(user_id=user.id, file_id=file_id, db=db)
