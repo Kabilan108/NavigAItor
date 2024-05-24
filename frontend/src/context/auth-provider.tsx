@@ -65,7 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setUser(undefined);
           return;
         } else {
-          setUser(response.data.user);
+          setUser(response.data.data.user);
         }
       } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
