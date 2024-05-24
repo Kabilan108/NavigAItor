@@ -1,9 +1,9 @@
 from fastapi import Depends, UploadFile, HTTPException
-from bson.objectid import ObjectId
 import boto3
 import uuid
 
 from core.config import Settings, get_settings
+from core import crud
 from schema.files import NewFile, FileInDB, raise_upload_error
 from services import mongo
 
@@ -51,18 +51,16 @@ async def upload_file(
         conversation_id=conversation_id,
     )
     try:
-        inserted = await db.files.insert_one(metadata.model_dump())
+        file = await crud.create_file(db, metadata)
     except Exception as e:
         raise_upload_error(e)
-
-    file = FileInDB(**metadata.model_dump(), _id=inserted.inserted_id)
 
     return file
 
 
 async def get_file(file_id: str, user_id: str, db: mongo.AsyncClient) -> FileInDB:
     """Find file by id"""
-    file = await db.files.find_one({"_id": ObjectId(file_id)})
+    file = await crud.get_file(db, file_id, user_id)
     if not file:
         raise HTTPException(status_code=404, detail="File not found")
     if file["user_id"] != user_id:
@@ -80,7 +78,7 @@ async def delete_file(
     """Delete file from S3"""
     file = await get_file(file_id, user_id, db)
     client.delete_object(Bucket=bucket, Key=file.s3_key)
-    await db.files.delete_one({"_id": ObjectId(file_id)})
+    await crud.delete_file(db, file_id, user_id)
     return
 
 

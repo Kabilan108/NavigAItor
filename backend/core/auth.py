@@ -70,7 +70,7 @@ async def authenticate_user(
     last_login = datetime.now().isoformat()
 
     if user_data:
-        user = await crud.update_user(db, user_data["sub"], {"last_login": last_login})
+        user = await crud.update_user(db, user_data["_id"], {"last_login": last_login})
         user = OAuthUserInDB(**user_data)
         user.last_login = last_login
         return user
@@ -93,10 +93,8 @@ async def get_current_user(
         sub = payload.get("sub")
         if not sub:
             raise_auth_failure("Invalid access token")
-        user = await db.users.find_one({"sub": sub})
-        if not user:
-            raise_auth_failure("User not found")
-        return OAuthUserInDB(**user)
+        user = await crud.get_user(db, sub)
+        return user
     except JWTError as e:
         raise_auth_failure(str(e))
 

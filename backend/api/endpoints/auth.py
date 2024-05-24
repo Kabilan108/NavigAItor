@@ -34,8 +34,8 @@ async def token(
 
         user: OAuthUserInDB = await authenticate_user(db, user_info)
 
-        access_token = create_access_token(sub=user.sub)
-        refresh_token = create_refresh_token(sub=user.sub)
+        access_token = create_access_token(sub=user.id)
+        refresh_token = create_refresh_token(sub=user.id)
         redirect_url = f"{settings.CLIENT_URL}/app#access_token={access_token}&refresh_token={refresh_token}"
         return RedirectResponse(url=redirect_url)
     except OAuthError as e:
