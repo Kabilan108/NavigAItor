@@ -7,13 +7,11 @@ from core.auth import (
     authenticate_user,
     create_access_token,
     create_refresh_token,
-    get_current_user,
     get_new_access_token,
 )
 from services import mongo
 from core.config import get_settings, Settings
 from schema.auth import OAuthUser, OAuthUserInDB
-from schema.base import Response
 
 router = APIRouter()
 
@@ -44,11 +42,6 @@ async def token(
         raise HTTPException(status_code=400, detail=f"OAuth error: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to authenticate user: {e}")
-
-
-@router.get("/user", name="user", response_model=Response)
-async def me(user: OAuthUserInDB = Depends(get_current_user)):
-    return {"message": "User fetched", "data": {"user": user}}
 
 
 @router.post("/refresh", name="refresh")

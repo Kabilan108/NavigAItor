@@ -11,6 +11,7 @@ from schema.auth import OAuthUser, OAuthUserInDB, raise_auth_failure
 from api.deps import AsyncIOMotorClient
 from core.config import ROOT, settings
 from services import mongo
+from core import crud
 
 config = Config(ROOT / ".env")
 oauth = OAuth(config)
@@ -69,9 +70,7 @@ async def authenticate_user(
     last_login = datetime.now().isoformat()
 
     if user_data:
-        await db.users.update_one(
-            {"email": user_info.email}, {"$set": {"last_login": last_login}}
-        )
+        user = await crud.update_user(db, user_data["sub"], {"last_login": last_login})
         user = OAuthUserInDB(**user_data)
         user.last_login = last_login
         return user

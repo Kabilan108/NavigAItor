@@ -3,6 +3,7 @@ import axios from "axios";
 
 interface AuthContextState {
   user?: {
+    id: string;
     sub: string;
     email: string;
     email_verified: boolean;
@@ -54,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/auth/user`,
+          `${import.meta.env.VITE_API_URL}/users/me`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

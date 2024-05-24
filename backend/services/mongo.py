@@ -15,6 +15,9 @@ def get_db_sync(settings: Settings = Depends(get_settings)) -> Client:
 
 
 async def get_db(settings: Settings = Depends(get_settings)) -> AsyncClient:
+    import logfire
+
+    logfire.info("{settings=}", settings=settings)
     client = AsyncIOMotorClient(settings.MONGO_URI)
     db = client[settings.MONGO_DB]
     return db

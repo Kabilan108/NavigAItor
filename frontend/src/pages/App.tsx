@@ -37,8 +37,11 @@ export default function MainApp() {
           count is {count}
         </button>
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR Hello {user.name}
+          Edit <code>src/App.tsx</code> and save to test HMR Hello
         </p>
+        <p>Hello {user.name}</p>
+        <p>Email: {user.email}</p>
+        <p>ID: {user.id}</p>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
