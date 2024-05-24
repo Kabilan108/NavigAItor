@@ -4,7 +4,7 @@ import boto3
 import uuid
 
 from core.config import Settings, get_settings
-from schema.files import CreateFile, FileInDB, raise_upload_error
+from schema.files import NewFile, FileInDB, raise_upload_error
 from services import mongo
 
 Client = boto3.client
@@ -43,7 +43,7 @@ async def upload_file(
     except Exception as e:
         raise_upload_error(e)
 
-    metadata = CreateFile(
+    metadata = NewFile(
         name=file.filename,
         type=file.content_type,
         s3_key=s3_key,
@@ -81,7 +81,7 @@ async def delete_file(
     file = await get_file(file_id, user_id, db)
     client.delete_object(Bucket=bucket, Key=file.s3_key)
     await db.files.delete_one({"_id": ObjectId(file_id)})
-    return {"message": "File deleted"}
+    return
 
 
 async def list_files(user_id: str, db: mongo.AsyncClient) -> list[FileInDB]:

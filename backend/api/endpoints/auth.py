@@ -12,7 +12,8 @@ from core.auth import (
 )
 from services import mongo
 from core.config import get_settings, Settings
-from schema.auth import OAuthUser, OAuthUserInDB, User
+from schema.auth import OAuthUser, OAuthUserInDB
+from schema.base import Response
 
 router = APIRouter()
 
@@ -45,9 +46,9 @@ async def token(
         raise HTTPException(status_code=500, detail=f"Failed to authenticate user: {e}")
 
 
-@router.get("/user", name="user", response_model=User)
+@router.get("/user", name="user", response_model=Response)
 async def me(user: OAuthUserInDB = Depends(get_current_user)):
-    return {"user": user}
+    return {"message": "User fetched", "data": {"user": user}}
 
 
 @router.post("/refresh", name="refresh")

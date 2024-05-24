@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field, field_serializer, field_validator
 from fastapi import HTTPException
-from bson import ObjectId
+from pydantic import BaseModel
+
 from datetime import datetime
+
+from schema.base import BaseInDB, DBBase
 
 
 class OAuthUser(BaseModel):
@@ -14,13 +16,8 @@ class OAuthUser(BaseModel):
     family_name: str
 
 
-class OAuthUserInDB(OAuthUser):
-    created_at: datetime
+class OAuthUserInDB(OAuthUser, DBBase, BaseInDB):
     last_login: datetime
-    id: str = Field(..., alias="_id")
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @classmethod
     def from_oauth_user(cls, user: OAuthUser) -> "OAuthUserInDB":
@@ -29,20 +26,6 @@ class OAuthUserInDB(OAuthUser):
             created_at=datetime.now(),
             last_login=datetime.now(),
         )
-
-    @field_serializer("created_at", "last_login")
-    def serialize_date_time(self, v):
-        return v.isoformat()
-
-    @field_validator("id", mode="before")
-    def validate_id(cls, v):
-        if isinstance(v, ObjectId):
-            return str(v)
-        return v
-
-
-class User(BaseModel):
-    user: OAuthUserInDB | None = None
 
 
 def raise_auth_failure(detail: str = "Unauthorized"):

@@ -66,7 +66,7 @@ async def authenticate_user(
     If the user does not exist, create a new user.
     """
     user_data = await db.users.find_one({"email": user_info.email})
-    last_login = datetime.now()
+    last_login = datetime.now().isoformat()
 
     if user_data:
         await db.users.update_one(
