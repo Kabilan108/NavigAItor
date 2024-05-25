@@ -1,12 +1,15 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LandingPage from "@/pages/Landing";
-import LoginPage from "@/pages/LogIn";
-import MainApp from "@/pages/App";
-import { ThemeProvider } from "@/context/theme-provider";
-import { AuthProvider } from "@/context/auth-provider";
-import { useAuth } from "./lib/context";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+
+import Dashboard from "@/pages/dashboard";
+import LandingPage from "@/pages/landing";
+import LoginPage from "@/pages/login";
+
+import { ThemeProvider } from "@/context/theme-provider";
+import { AuthProvider } from "@/context/auth-provider";
+import { TabProvider } from "@/context/tab-provider";
+import { useAuth } from "@/lib/context";
 
 function Logout() {
   const navigate = useNavigate();
@@ -23,16 +26,18 @@ function Logout() {
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Router>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/app" element={<MainApp />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/logout" element={<Logout />} />
-          </Routes>
-        </Router>
-      </ThemeProvider>
+      <TabProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Router>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/app" element={<Dashboard />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/logout" element={<Logout />} />
+            </Routes>
+          </Router>
+        </ThemeProvider>
+      </TabProvider>
     </AuthProvider>
   );
 }

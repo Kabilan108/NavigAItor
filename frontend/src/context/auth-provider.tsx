@@ -1,19 +1,11 @@
 import React, { createContext, useState, useEffect } from "react";
+
+import { User } from "@/types/user";
+
 import axios from "axios";
 
 interface AuthContextState {
-  user?: {
-    id: string;
-    sub: string;
-    email: string;
-    email_verified: boolean;
-    name: string;
-    picture: string;
-    given_name: string;
-    family_name: string;
-    created_at: string;
-    last_login: string;
-  };
+  user?: User;
   loading: boolean;
   login: () => void;
   logout: () => void;

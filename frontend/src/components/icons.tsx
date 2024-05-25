@@ -1,10 +1,32 @@
-import { LucideProps, Moon, SunMedium, type LucideIcon } from "lucide-react";
+import {
+  LucideProps,
+  type LucideIcon,
+  CircleHelp,
+  CornerDownLeft,
+  FileCode2,
+  Files,
+  MessageSquareText,
+  Moon,
+  Paperclip,
+  Settings,
+  SunMedium,
+  User,
+} from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
-  sun: SunMedium,
-  moon: Moon,
+  light: SunMedium,
+  dark: Moon,
+  chat: MessageSquareText,
+  prompts: FileCode2,
+  library: Files,
+  settings: Settings,
+  help: CircleHelp,
+  user: User,
+  attachFile: Paperclip,
+  send: CornerDownLeft,
+
   logo: (props: LucideProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

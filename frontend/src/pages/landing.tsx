@@ -1,4 +1,4 @@
-import { ModeToggle } from "@/components/ui/mode-toggle";
+import ModeToggle from "@/components/ui/mode-toggle";
 
 function LandingPage() {
   return (
