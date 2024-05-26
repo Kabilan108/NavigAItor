@@ -2,7 +2,7 @@ from pydantic import BaseModel, computed_field
 
 from schema.base import DBBase, BaseInDB
 from schema.chat import Message
-from schema.files import FileInDB
+from schema.documents import Document
 
 
 class NewConversation(DBBase):
@@ -10,7 +10,7 @@ class NewConversation(DBBase):
 
     title: str
     messages: list[Message]
-    files: list[FileInDB]
+    documents: list[Document]
     description: str | None = None
 
     @computed_field(return_type=int)

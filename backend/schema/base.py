@@ -1,7 +1,14 @@
-from pydantic import BaseModel, Field, model_serializer, field_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 from bson import ObjectId
 
 from datetime import datetime
+import json
 
 
 class DBBase(BaseModel):
@@ -30,6 +37,15 @@ class BaseInDB(BaseModel):
 
     def model_dump(self, **kwargs):
         return super(BaseInDB, self).model_dump(by_alias=True, **kwargs)
+
+
+class UploadBase(BaseModel):
+    """This is a base model for metadata included in file uploads"""
+
+    @model_validator(mode="before")
+    @classmethod
+    def to_py_dict(cls, data):
+        return json.loads(data)
 
 
 class Response(BaseModel):

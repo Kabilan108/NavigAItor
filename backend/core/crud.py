@@ -2,7 +2,7 @@ from bson.objectid import ObjectId
 
 from schema.auth import OAuthUserInDB, raise_auth_failure
 from schema.conversations import ConversationInDB, NewConversation, UpdateConversation
-from schema.files import FileInDB, NewFile
+from schema.documents import Document, NewDocument
 from services.mongo import AsyncClient
 
 
@@ -25,30 +25,30 @@ async def delete_user(db: AsyncClient, user_id: str):
     await db.users.delete_one({"_id": ObjectId(user_id)})
 
 
-async def create_file(db: AsyncClient, file: NewFile) -> FileInDB:
-    inserted = await db.files.insert_one(file.model_dump())
-    return FileInDB(**file.model_dump(), id=inserted.inserted_id)
+async def create_document(db: AsyncClient, doc: NewDocument) -> Document:
+    inserted = await db.documents.insert_one(doc.model_dump())
+    return Document(**doc.model_dump(), _id=inserted.inserted_id)
 
 
-async def get_file(db: AsyncClient, file_id: str, user_id: str) -> FileInDB:
-    file = await db.files.find_one({"_id": ObjectId(file_id), "user_id": user_id})
-    return FileInDB(**file)
+async def get_document(db: AsyncClient, doc_id: str, user_id: str) -> Document:
+    doc = await db.documents.find_one({"_id": ObjectId(doc_id), "user_id": user_id})
+    return Document(**doc)
 
 
-async def update_file(
-    db: AsyncClient, file_id: str, user_id: str, file_update: dict
-) -> FileInDB:
-    await db.files.update_one(
-        {"_id": ObjectId(file_id), "user_id": user_id}, {"$set": file_update}
+async def update_document(
+    db: AsyncClient, doc_id: str, user_id: str, doc_update: dict
+) -> Document:
+    await db.documents.update_one(
+        {"_id": ObjectId(doc_id), "user_id": user_id}, {"$set": doc_update}
     )
-    updated_file_data = await db.files.find_one(
-        {"_id": ObjectId(file_id), "user_id": user_id}
+    updated_doc = await db.documents.find_one(
+        {"_id": ObjectId(doc_id), "user_id": user_id}
     )
-    return FileInDB(**updated_file_data)
+    return Document(**updated_doc)
 
 
-async def delete_file(db: AsyncClient, file_id: str, user_id: str):
-    await db.files.delete_one({"_id": ObjectId(file_id), "user_id": user_id})
+async def delete_document(db: AsyncClient, doc_id: str, user_id: str):
+    await db.documents.delete_one({"_id": ObjectId(doc_id), "user_id": user_id})
 
 
 async def create_conversation(
