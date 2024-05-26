@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
+import * as Icons from "@/components/icons";
 
 import { type SharedProps, Tabs } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ export default function UserAvatar({ setActiveTab, user }: Props) {
           className="overflow-hidden rounded-full ml-auto gap-1.5"
         >
           {imageError ? (
-            <Icons.user className="size-5" />
+            <Icons.User className="size-5" />
           ) : (
             <img
               src={user.picture}

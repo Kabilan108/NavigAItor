@@ -1,9 +1,9 @@
-import UserAvatar from "@/components/ui/user-avatar";
+import UserAvatar from "@/components/ui/dashboard/user-avatar";
 
 import { type SharedProps } from "@/lib/utils";
 
 interface Props extends SharedProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export default function Header(props: Props) {

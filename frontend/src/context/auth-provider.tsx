@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 
-import { User } from "@/types/user";
+import { User } from "@/lib/utils";
 
 import axios from "axios";
 
@@ -84,7 +84,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             setUser(undefined);
           }
         } else {
-          console.error("Failed to fetch user:", error);
           setUser(undefined);
         }
       } finally {

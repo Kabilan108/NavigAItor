@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/lib/context";
 
 import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
+import * as Icons from "@/components/icons";
 
 export default function LoginPage() {
   const { user, login } = useAuth();
@@ -23,7 +23,7 @@ export default function LoginPage() {
     <div className="w-full min-h-[600px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
-          <Icons.logo className="w-20 h-20 mx-auto mb-8 text-accent-foreground" />
+          <Icons.Logo className="w-20 h-20 mx-auto mb-8 text-accent-foreground" />
 
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
@@ -37,7 +37,7 @@ export default function LoginPage() {
               className="w-full"
               onClick={handleGoogleSignIn}
             >
-              Sign in with <Icons.google className="ml-2 mr-2 h-5 w-5" />
+              Sign in with <Icons.Google className="ml-2 mr-2 h-5 w-5" />
             </Button>
           </div>
         </div>

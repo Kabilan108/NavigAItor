@@ -15,7 +15,7 @@ interface Props {
   inDrawer?: boolean;
 }
 
-export default function ChatSettings({ inDrawer }: Props) {
+export default function ChatOptions({ inDrawer }: Props) {
   return (
     <form
       className={cn(

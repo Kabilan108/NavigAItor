@@ -2,26 +2,73 @@ import { Navigate } from "react-router-dom";
 
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Sidebar from "@/components/ui/sidebar";
+import Sidebar from "@/components/ui/dashboard/sidebar";
 
-import Header from "@/components/ui/app-header";
+import Header from "@/components/ui/dashboard/header";
 import { Chat, ChatDrawer } from "@/components/chat";
 
 import { type SharedProps, Tabs } from "@/lib/utils";
 import { useAuth, useTabs } from "@/lib/context";
-import "@/pages/App.css";
 
 interface Props extends SharedProps {}
+
+function TabContent(props: Props) {
+  switch (props.activeTab.id) {
+    case Tabs.CHAT.id:
+      return (
+        <>
+          <Header {...props} children={<ChatDrawer />} />
+          <Chat {...props} />
+        </>
+      );
+    case Tabs.KNOWLEDGE_BASE.id:
+      return (
+        <>
+          <Header {...props} />
+          {/* <KnowledgeBase {...props} /> */}
+        </>
+      );
+    case Tabs.PROMPTS.id:
+      return (
+        <>
+          <Header {...props} />
+          {/* <Prompts {...props} /> */}
+        </>
+      );
+    case Tabs.HELP.id:
+      return (
+        <>
+          <Header {...props} />
+          {/* <Help {...props} /> */}
+        </>
+      );
+    case Tabs.SETTINGS.id:
+      return (
+        <>
+          <Header {...props} />
+          {/* <Settings {...props} /> */}
+        </>
+      );
+    case Tabs.ACCOUNT.id:
+      return (
+        <>
+          <Header {...props} />
+          {/* <Account {...props} /> */}
+        </>
+      );
+    default:
+      return <div>Unknown tab selected</div>;
+  }
+}
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const { activeTab, setActiveTab } = useTabs();
 
-  const props: Props = { activeTab, setActiveTab, user };
+  const props: Props = { activeTab, setActiveTab, user: user! };
 
   // redirect only after loading
   if (!loading && user === undefined) {
-    console.log("not logged in");
     return <Navigate to="/login" />;
   }
 
@@ -30,36 +77,12 @@ export default function Dashboard() {
     return <LoadingSpinner />;
   }
 
-  const renderDrawer = () => {
-    if (activeTab === Tabs.CHAT) {
-      return <ChatDrawer />;
-    }
-  };
-
-  const renderTab = (props: Props) => {
-    switch (props.activeTab.id) {
-      case Tabs.CHAT.id:
-        return <Chat {...props} />;
-      // case "prompts":
-      //   return <Prompts />;
-      // case "knowledge-base":
-      //   return <KnowledgeBase />;
-      // case "help":
-      //   return <Help />;
-      // case "settings":
-      //   return <Settings />;
-      // case "account":
-      //   return <Account />;
-    }
-  };
-
   return (
     <TooltipProvider>
       <div className="grid h-screen w-full pl-[53px]">
         <Sidebar {...props} />
         <div className="flex flex-col">
-          <Header {...props}>{renderDrawer()}</Header>
-          {renderTab(props)}
+          <TabContent {...props} />
         </div>
       </div>
     </TooltipProvider>
