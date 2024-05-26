@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Conversation } from "@/components/dashboard/chat/conversation";
+import HideablePanel from "@/components/dashboard/hideable-panel";
 import MessageBox from "@/components/dashboard/chat/message-box";
 import ChatOptions from "@/components/dashboard/chat/options";
 import Drawer from "@/components/dashboard/drawer";
@@ -10,24 +11,9 @@ import { type SharedProps } from "@/lib/utils";
 
 interface Props extends SharedProps {}
 
-function RightPanel() {
-  return (
-    <div
-      className="relative hidden flex-col items-start gap-8 md:flex"
-      x-chunk="dashboard-03-chunk-0"
-    >
-      <ChatOptions />
-    </div>
-  );
-}
+const RightPanel = () => <HideablePanel children={<ChatOptions />} />;
 
-export function ChatDrawer() {
-  return (
-    <Drawer>
-      <ChatOptions />
-    </Drawer>
-  );
-}
+export const ChatDrawer = () => <Drawer children={<ChatOptions />} />;
 
 export function Chat(props: Props) {
   const [conversation, addMessage] = useState<MessageType[]>([]);

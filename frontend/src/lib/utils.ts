@@ -18,7 +18,6 @@ export interface User {
   picture: string;
   given_name: string;
   family_name: string;
-  created_at: string;
   last_login: string;
 }
 
@@ -26,6 +25,26 @@ export interface Tab {
   id: string;
   title: string;
   icon: Icons.Icon;
+}
+
+export interface Document {
+  id: string;
+  user_id: string;
+  conversation_id: string;
+  file_type: string;
+  object_key: string;
+  metadata: {
+    [key: string]: string | string[];
+    name: string;
+    document_type: DocumentType;
+    tags: string[];
+  };
+}
+
+export enum DocumentType {
+  SLIDES = "slides",
+  DOCUMENT = "document",
+  RECORDING = "recording",
 }
 
 export interface SharedProps extends TabContextType {

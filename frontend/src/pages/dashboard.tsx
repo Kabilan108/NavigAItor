@@ -2,10 +2,15 @@ import { Navigate } from "react-router-dom";
 
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Sidebar from "@/components/dashboard/sidebar";
+import { Toaster } from "@/components/ui/toaster";
 
+import {
+  KnowledgeBase,
+  KnowledgeBaseDrawer,
+} from "@/components/dashboard/knowledge-base";
+import { Chat, ChatDrawer } from "@/components/dashboard/chat";
+import Sidebar from "@/components/dashboard/sidebar";
 import Header from "@/components/dashboard/header";
-import { Chat, ChatDrawer } from "@/components/chat";
 
 import { type SharedProps, Tabs } from "@/lib/utils";
 import { useAuth, useTabs } from "@/lib/context";
@@ -24,8 +29,8 @@ function TabContent(props: Props) {
     case Tabs.KNOWLEDGE_BASE.id:
       return (
         <>
-          <Header {...props} />
-          {/* <KnowledgeBase {...props} /> */}
+          <Header {...props} children={<KnowledgeBaseDrawer />} />
+          <KnowledgeBase {...props} />
         </>
       );
     case Tabs.PROMPTS.id:
@@ -85,6 +90,7 @@ export default function Dashboard() {
           <TabContent {...props} />
         </div>
       </div>
+      <Toaster />
     </TooltipProvider>
   );
 }
