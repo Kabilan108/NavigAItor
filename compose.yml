@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  frontend:
+    command: |
+      /bin/sh -c "envsubst < /usr/share/nginx/html/config.js.template > /usr/share/nginx/html/config.js && nginx -g 'daemon off;'"
+    # image: kabilan108/navigaitor-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:80
+    restart: always
+    env_file:
+      - ./frontend/.env.client
+    networks:
+      - navigaitor
+  backend:
+    # image: kabilan108/navigaitor-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env.server
+    restart: always
+    networks:
+      - navigaitor
+
+networks:
+  navigaitor:
+    driver: bridge

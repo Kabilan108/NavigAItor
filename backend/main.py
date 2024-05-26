@@ -44,6 +44,11 @@ async def add_process_time_header(request: Request, call_next):
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
+@app.route("/")
+def health_check():
+    return {"status": "ok"}
+
+
 if __name__ == "__main__":
     import uvicorn
 

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 
+import { getAPIURL } from "@/config";
 import { User } from "@/lib/utils";
 
 import axios from "axios";
@@ -46,14 +47,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/users/me`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
+        const response = await axios.get(`${getAPIURL()}/users/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
-        );
+        });
         if (response.data.user === 0) {
           setUser(undefined);
           return;
@@ -68,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               return;
             } else {
               const refreshResponse = await axios.post(
-                `${import.meta.env.VITE_API_URL}/auth/refresh`,
+                `${getAPIURL()}/auth/refresh`,
                 {
                   refresh_token: localStorage.getItem("refreshToken"),
                 },
@@ -95,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/login`;
+    window.location.href = `${getAPIURL()}/auth/login`;
   };
 
   const logout = () => {

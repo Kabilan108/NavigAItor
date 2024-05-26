@@ -21,6 +21,7 @@ build/
 
 # Logs
 logs/
+.logfire/
 *.log
 
 # debug
@@ -31,6 +32,8 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.client
+.env.server
 
 # vercel
 .vercel

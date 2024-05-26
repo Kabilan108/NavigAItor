@@ -16,6 +16,7 @@ const RightPanel = () => <HideablePanel children={<ChatOptions />} />;
 export const ChatDrawer = () => <Drawer children={<ChatOptions />} />;
 
 export function Chat(props: Props) {
+  console.log(props);
   const [conversation, addMessage] = useState<MessageType[]>([]);
 
   const handleSendMessage = async (userMessage: MessageType) => {

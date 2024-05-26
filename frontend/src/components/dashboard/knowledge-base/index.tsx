@@ -20,6 +20,7 @@ export const KnowledgeBaseDrawer = () => (
 );
 
 export function KnowledgeBase(props: Props) {
+  console.log(props);
   const [documents, setDocuments] = useState<Document[]>([]);
 
   useEffect(() => {

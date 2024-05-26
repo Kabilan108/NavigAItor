@@ -17,3 +17,12 @@ export const siteConfig = {
     github: "https://github.com/kabilan108/navigaitor",
   },
 };
+
+export const getAPIURL = () => {
+  console.log(process.env.NODE_ENV);
+  if (process.env.NODE_ENV === "development") {
+    return import.meta.env.VITE_API_URL;
+  } else {
+    return window.env.API_URL;
+  }
+};

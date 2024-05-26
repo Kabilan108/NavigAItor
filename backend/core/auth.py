@@ -9,11 +9,11 @@ from typing import MutableMapping
 
 from schema.auth import OAuthUser, OAuthUserInDB, raise_auth_failure
 from api.deps import AsyncIOMotorClient
-from core.config import ROOT, settings
+from core.config import settings
 from services import mongo
 from core import crud
 
-config = Config(ROOT / ".env")
+config = Config()
 oauth = OAuth(config)
 
 CONF_URL = "https://accounts.google.com/.well-known/openid-configuration"
