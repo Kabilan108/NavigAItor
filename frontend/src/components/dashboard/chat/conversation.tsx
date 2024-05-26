@@ -1,3 +1,5 @@
+import { useRef, useEffect } from "react";
+
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import Markdown from "react-markdown";
@@ -10,35 +12,9 @@ import * as Icons from "@/components/icons";
 import { type Message as MessageType, Role } from "@/client/generated";
 import { cn } from "@/lib/utils";
 
-const messages: MessageType[] = [
-  {
-    role: Role.ASSISTANT,
-    content: `Hello, I'm an AI assistant. How can I help you today?
-# Heading
-## Subheading
-### Subsubheading
-#### Subsubsubheading
-
-**Bold text**
-
-*Italic text*
-
-\`inline code\`
-
-$$y = \\frac{1}{2}$$
-
-\`\`\`javascript
-function hello() {
-  console.log("Hello, world!");
+interface Props {
+  messages: MessageType[];
 }
-\`\`\`
-    `,
-  },
-  {
-    role: Role.USER,
-    content: "Hi there! Can you explain how airplane turbulence works?",
-  },
-];
 
 function MdRender({ markdown }: { markdown: string }) {
   return (
@@ -96,10 +72,21 @@ export function Message({ message }: { message: MessageType }) {
   }
 }
 
-export function Conversation() {
+export function Conversation({ messages }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <div className="flex-1">
-      <div className="flex flex-col gap-4">
+      <div
+        ref={containerRef}
+        className="flex flex-col gap-4 overflow-y-auto h-[calc(100vh-250px)] pr-2"
+      >
         {messages.map((message, index) => (
           <Message key={index} message={message} />
         ))}

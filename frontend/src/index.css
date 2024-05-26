@@ -87,3 +87,24 @@ h6 {
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide the default scroll bar */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 0.3rem;
+}
+
+/* Track */
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 0.25rem;
+}
+
+/* Handle on hover */
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
