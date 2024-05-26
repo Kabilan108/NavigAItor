@@ -39,7 +39,7 @@ export function Chat(props: Props) {
 
     const assistantMessage = {
       role: Role.ASSISTANT,
-      content: "Hello, I'm an AI assistant. How can I help you today?",
+      content: "Hello, I'm an **AI assistant**. How can I help you today?",
     };
     addMessage([...conversation, userMessage, assistantMessage]);
   };

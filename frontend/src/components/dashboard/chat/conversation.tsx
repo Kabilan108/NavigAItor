@@ -1,12 +1,6 @@
 import { useRef, useEffect } from "react";
 
-import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import Markdown from "react-markdown";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
-import remarkGfm from "remark-gfm";
-
+import Markdown from "@/components/dashboard/chat/markdown";
 import * as Icons from "@/components/icons";
 
 import { type Message as MessageType, Role } from "@/client/generated";
@@ -14,35 +8,6 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   messages: MessageType[];
-}
-
-function MdRender({ markdown }: { markdown: string }) {
-  return (
-    <Markdown
-      remarkPlugins={[remarkMath, remarkGfm]}
-      rehypePlugins={[rehypeKatex]}
-      children={markdown}
-      components={{
-        code(props) {
-          const { children, className, ref, ...rest } = props;
-          const match = /language-(\w+)/.exec(className || "");
-          return match ? (
-            <SyntaxHighlighter
-              {...rest}
-              PreTag="div"
-              children={String(children).replace(/\n$/, "")}
-              language={match[1]}
-              style={docco}
-            />
-          ) : (
-            <code {...rest} className={className} ref={ref}>
-              {children}
-            </code>
-          );
-        },
-      }}
-    />
-  );
 }
 
 export function Message({ message }: { message: MessageType }) {
@@ -64,7 +29,7 @@ export function Message({ message }: { message: MessageType }) {
             isUser ? "bg-primary self-end" : "bg-secondary self-start",
           )}
         >
-          <MdRender markdown={message.content} />
+          <Markdown content={message.content} />
         </div>
         {isUser ? <Icons.User className="size-7" /> : null}
       </div>
