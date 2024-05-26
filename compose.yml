@@ -9,7 +9,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - 3000:80
+      - 4000:80
     restart: always
     env_file:
       - ./frontend/.env.client

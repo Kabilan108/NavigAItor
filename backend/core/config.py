@@ -11,7 +11,7 @@ ROOT = Path(__file__).parent.parent
 
 
 class Settings(BaseSettings):
-    API_V1_STR: str | None = "/api/v1"
+    API_PATH: str | None = "/api/v1"
     # SECRET_KEY: str
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int | None = 60 * 24 * 8

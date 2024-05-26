@@ -11,9 +11,9 @@ from api import api_router
 
 app = FastAPI(
     title="navigAItor-server",
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    # docs_url=f"{settings.API_V1_STR}/docs",
-    # redoc_url=f"{settings.API_V1_STR}/redoc",
+    openapi_url=f"{settings.API_PATH}/openapi.json",
+    # docs_url=f"{settings.API_PATH}/docs",
+    # redoc_url=f"{settings.API_PATH}/redoc",
     version="0.1.0",
 )
 
@@ -41,7 +41,7 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(api_router, prefix=settings.API_PATH)
 
 
 @app.route("/")
