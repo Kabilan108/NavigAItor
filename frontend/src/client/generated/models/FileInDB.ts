@@ -2,13 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { FileMetadata } from "./FileMetadata";
 export type FileInDB = {
   _id: string;
   created_at?: string;
   updated_at?: string;
-  name: string;
-  type: string;
   user_id: string;
   conversation_id?: string | null;
-  s3_key: string;
+  object_key: string;
+  file_type: string;
+  metadata: FileMetadata;
 };
