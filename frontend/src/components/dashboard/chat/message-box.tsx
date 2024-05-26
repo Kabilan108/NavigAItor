@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import * as Icons from "@/components/icons";
 
-import AttachFileTooltip from "@/components/ui/dashboard/chat/attach-file-tooltip";
+import AttachFileTooltip from "@/components/dashboard/chat/attach-file-tooltip";
 import { handleAttachFile } from "@/lib/chat";
 
 export default function MessageBox() {

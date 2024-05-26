@@ -1,7 +1,7 @@
-import { Conversation } from "@/components/ui/dashboard/chat/conversation";
-import MessageBox from "@/components/ui/dashboard/chat/message-box";
-import ChatOptions from "@/components/ui/dashboard/chat/options";
-import Drawer from "@/components/ui/dashboard/drawer";
+import { Conversation } from "@/components/dashboard/chat/conversation";
+import MessageBox from "@/components/dashboard/chat/message-box";
+import ChatOptions from "@/components/dashboard/chat/options";
+import Drawer from "@/components/dashboard/drawer";
 
 import { type SharedProps } from "@/lib/utils";
 

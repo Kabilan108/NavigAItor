@@ -2,9 +2,9 @@ import { Navigate } from "react-router-dom";
 
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Sidebar from "@/components/ui/dashboard/sidebar";
+import Sidebar from "@/components/dashboard/sidebar";
 
-import Header from "@/components/ui/dashboard/header";
+import Header from "@/components/dashboard/header";
 import { Chat, ChatDrawer } from "@/components/chat";
 
 import { type SharedProps, Tabs } from "@/lib/utils";

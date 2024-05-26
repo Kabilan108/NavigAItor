@@ -1,4 +1,4 @@
-import UserAvatar from "@/components/ui/dashboard/user-avatar";
+import UserAvatar from "@/components/dashboard/user-avatar";
 
 import { type SharedProps } from "@/lib/utils";
 

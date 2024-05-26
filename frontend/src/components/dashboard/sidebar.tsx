@@ -1,4 +1,4 @@
-import SidebarTooltip from "@/components/ui/dashboard/sidebar-tooltip";
+import SidebarTooltip from "@/components/dashboard/sidebar-tooltip";
 import DarkModeToggle from "@/components/ui/dark-mode-toggle";
 import { Button } from "@/components/ui/button";
 import * as Icons from "@/components/icons";
