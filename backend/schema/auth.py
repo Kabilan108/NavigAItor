@@ -16,6 +16,10 @@ class OAuthUser(BaseModel):
     family_name: str
 
 
+class Token(BaseModel):
+    access_token: str
+
+
 class NewOAuthUser(OAuthUser, DBBase):
     last_login: datetime = Field(default_factory=datetime.now)
 

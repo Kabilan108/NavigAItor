@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Tag } from "./Tag";
-export type FileMetadata = {
+import type { DocumentType } from "./DocumentType";
+export type DocumentMetadataUpload = {
   name: string;
-  document_type: string;
-  tags: Array<Tag>;
+  tags?: Array<string>;
+  document_type: DocumentType;
 };

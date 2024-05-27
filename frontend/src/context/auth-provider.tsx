@@ -1,9 +1,8 @@
 import React, { createContext, useState, useEffect } from "react";
-
-import { getAPIURL } from "@/config";
-import { User } from "@/lib/utils";
-
 import axios from "axios";
+
+import * as client from "@/client";
+import { User } from "@/client/types";
 
 interface AuthContextState {
   user?: User;
@@ -47,16 +46,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`${getAPIURL()}/users/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        });
-        if (response.data.user === 0) {
-          setUser(undefined);
-          return;
-        } else {
-          setUser(response.data.data.user);
+        const user = await client.getCurrentUser();
+        if (user) {
+          setUser(user);
         }
       } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -65,16 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               setUser(undefined);
               return;
             } else {
-              const refreshResponse = await axios.post(
-                `${getAPIURL()}/auth/refresh`,
-                {
-                  refresh_token: localStorage.getItem("refreshToken"),
-                },
-              );
-              localStorage.setItem(
-                "accessToken",
-                refreshResponse.data.access_token,
-              );
+              await client.refreshToken();
               await fetchUser();
             }
           } catch (refreshError) {
@@ -92,16 +75,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchUser();
   }, []);
 
-  const login = () => {
-    window.location.href = `${getAPIURL()}/auth/login`;
-  };
+  const login = () => client.logIn();
 
-  const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    setUser(undefined);
-    window.location.href = "/";
-  };
+  const logout = () => client.logOut();
 
   const value = {
     user,

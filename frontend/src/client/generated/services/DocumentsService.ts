@@ -2,26 +2,26 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Body_upload_file_api_v1_files_upload_post } from "../models/Body_upload_file_api_v1_files_upload_post";
-import type { FileInDB } from "../models/FileInDB";
+import type { Body_upload_document_api_v1_documents_upload_post } from "../models/Body_upload_document_api_v1_documents_upload_post";
+import type { Document } from "../models/Document";
 import type { Response } from "../models/Response";
 import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
-export class FilesService {
+export class DocumentsService {
   /**
-   * Upload File
+   * Upload Document
    * @returns Response Successful Response
    * @throws ApiError
    */
-  public static uploadFileApiV1FilesUploadPost({
+  public static uploadDocumentApiV1DocumentsUploadPost({
     formData,
   }: {
-    formData: Body_upload_file_api_v1_files_upload_post;
+    formData: Body_upload_document_api_v1_documents_upload_post;
   }): CancelablePromise<Response> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "/api/v1/files/upload",
+      url: "/api/v1/documents/upload",
       formData: formData,
       mediaType: "multipart/form-data",
       errors: {
@@ -30,20 +30,20 @@ export class FilesService {
     });
   }
   /**
-   * Delete File
+   * Delete Document
    * @returns Response Successful Response
    * @throws ApiError
    */
-  public static deleteFileApiV1FilesFileIdDelete({
-    fileId,
+  public static deleteDocumentApiV1DocumentsDocumentIdDelete({
+    documentId,
   }: {
-    fileId: string;
+    documentId: string;
   }): CancelablePromise<Response> {
     return __request(OpenAPI, {
       method: "DELETE",
-      url: "/api/v1/files/{file_id}",
+      url: "/api/v1/documents/{document_id}",
       path: {
-        file_id: fileId,
+        document_id: documentId,
       },
       errors: {
         422: `Validation Error`,
@@ -51,20 +51,20 @@ export class FilesService {
     });
   }
   /**
-   * Get File
-   * @returns FileInDB Successful Response
+   * Get Document
+   * @returns Document Successful Response
    * @throws ApiError
    */
-  public static getFileApiV1FilesFileIdGet({
-    fileId,
+  public static getDocumentApiV1DocumentsDocumentIdGet({
+    documentId,
   }: {
-    fileId: string;
-  }): CancelablePromise<FileInDB> {
+    documentId: string;
+  }): CancelablePromise<Document> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/files/{file_id}",
+      url: "/api/v1/documents/{document_id}",
       path: {
-        file_id: fileId,
+        document_id: documentId,
       },
       errors: {
         422: `Validation Error`,
@@ -72,22 +72,22 @@ export class FilesService {
     });
   }
   /**
-   * Update File
+   * Update Document
    * @returns Response Successful Response
    * @throws ApiError
    */
-  public static updateFileApiV1FilesFileIdPut({
-    fileId,
+  public static updateDocumentApiV1DocumentsDocumentIdPut({
+    documentId,
     requestBody,
   }: {
-    fileId: string;
+    documentId: string;
     requestBody: Record<string, any>;
   }): CancelablePromise<Response> {
     return __request(OpenAPI, {
       method: "PUT",
-      url: "/api/v1/files/{file_id}",
+      url: "/api/v1/documents/{document_id}",
       path: {
-        file_id: fileId,
+        document_id: documentId,
       },
       body: requestBody,
       mediaType: "application/json",
@@ -97,14 +97,16 @@ export class FilesService {
     });
   }
   /**
-   * List Files
-   * @returns FileInDB Successful Response
+   * List Documents
+   * @returns Document Successful Response
    * @throws ApiError
    */
-  public static listFilesApiV1FilesGet(): CancelablePromise<Array<FileInDB>> {
+  public static listDocumentsApiV1DocumentsGet(): CancelablePromise<
+    Array<Document>
+  > {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/files",
+      url: "/api/v1/documents",
     });
   }
 }

@@ -8,19 +8,20 @@ export { OpenAPI } from "./core/OpenAPI";
 export type { OpenAPIConfig } from "./core/OpenAPI";
 
 export type { BaseModel } from "./models/BaseModel";
-export type { Body_upload_file_api_v1_files_upload_post } from "./models/Body_upload_file_api_v1_files_upload_post";
+export type { Body_upload_document_api_v1_documents_upload_post } from "./models/Body_upload_document_api_v1_documents_upload_post";
 export type { ConversationInDB } from "./models/ConversationInDB";
-export type { FileInDB } from "./models/FileInDB";
-export type { FileMetadata } from "./models/FileMetadata";
+export type { Document } from "./models/Document";
+export type { DocumentMetadata } from "./models/DocumentMetadata";
+export type { DocumentMetadataUpload } from "./models/DocumentMetadataUpload";
+export { DocumentType } from "./models/DocumentType";
 export type { HTTPValidationError } from "./models/HTTPValidationError";
 export type { Message } from "./models/Message";
 export type { Response } from "./models/Response";
 export { Role } from "./models/Role";
-export { Tag } from "./models/Tag";
 export type { UpdateConversation } from "./models/UpdateConversation";
 export type { ValidationError } from "./models/ValidationError";
 
 export { AuthService } from "./services/AuthService";
 export { ConversationsService } from "./services/ConversationsService";
-export { FilesService } from "./services/FilesService";
+export { DocumentsService } from "./services/DocumentsService";
 export { UsersService } from "./services/UsersService";

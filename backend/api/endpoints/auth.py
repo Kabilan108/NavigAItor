@@ -11,7 +11,7 @@ from core.auth import (
 )
 from services import mongo
 from core.config import get_settings, Settings
-from schema.auth import OAuthUser, OAuthUserInDB
+from schema.auth import OAuthUser, OAuthUserInDB, Token
 
 router = APIRouter()
 
@@ -48,6 +48,6 @@ async def token(
 async def refresh(
     refresh_token: str = Body(...),
     db: mongo.AsyncClient = Depends(mongo.get_db),
-):
+) -> Token:
     access_token = await get_new_access_token(refresh_token, db)
     return {"access_token": access_token}

@@ -2,14 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FileMetadata } from "./FileMetadata";
-export type FileInDB = {
+import type { DocumentMetadata } from "./DocumentMetadata";
+export type Document = {
   _id: string;
   created_at?: string;
   updated_at?: string;
   user_id: string;
   conversation_id?: string | null;
   object_key: string;
+  file_name: string;
   file_type: string;
-  metadata: FileMetadata;
+  metadata: DocumentMetadata;
 };
