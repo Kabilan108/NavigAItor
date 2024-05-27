@@ -7,7 +7,7 @@ from fastapi import Depends
 from datetime import datetime, timedelta
 from typing import MutableMapping
 
-from schema.auth import OAuthUser, OAuthUserInDB, raise_auth_failure
+from schema.auth import OAuthUser, OAuthUserInDB, NewOAuthUser, raise_auth_failure
 from api.deps import AsyncIOMotorClient
 from core.config import settings
 from services import mongo
@@ -70,13 +70,13 @@ async def authenticate_user(
     last_login = datetime.now().isoformat()
 
     if user_data:
-        user = await crud.update_user(db, user_data["_id"], {"last_login": last_login})
-        user = OAuthUserInDB(**user_data)
-        user.last_login = last_login
+        user: OAuthUserInDB = await crud.update_user(
+            db, user_data["_id"], {"last_login": last_login}
+        )
         return user
     else:
-        user = OAuthUserInDB.from_oauth_user(user_info)
-        await db.users.insert_one(user.model_dump())
+        new_user = NewOAuthUser.from_oauth_user(user_info)
+        user = await crud.create_user(db, new_user)
         return user
 
 

@@ -1,9 +1,14 @@
 from bson.objectid import ObjectId
 
-from schema.auth import OAuthUserInDB, raise_auth_failure
+from schema.auth import OAuthUserInDB, NewOAuthUser, raise_auth_failure
 from schema.conversations import ConversationInDB, NewConversation, UpdateConversation
 from schema.documents import Document, NewDocument
 from services.mongo import AsyncClient
+
+
+async def create_user(db: AsyncClient, user: NewOAuthUser) -> OAuthUserInDB:
+    inserted = await db.users.insert_one(user.model_dump())
+    return OAuthUserInDB(**user.model_dump(), _id=inserted.inserted_id)
 
 
 async def get_user(db: AsyncClient, user_id: str) -> OAuthUserInDB:

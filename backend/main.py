@@ -41,10 +41,21 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
+@app.middleware("http")
+async def force_https(request: Request, call_next):
+    if (
+        "X-Forwarded-Proto" in request.headers
+        and request.headers["X-Forwarded-Proto"] == "https"
+    ):
+        request.scope["scheme"] = "https"
+    response = await call_next(request)
+    return response
+
+
 app.include_router(api_router, prefix=settings.API_PATH)
 
 
-@app.route("/")
+@app.route("/health")
 def health_check():
     return {"status": "ok"}
 
