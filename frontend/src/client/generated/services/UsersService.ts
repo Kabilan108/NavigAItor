@@ -3,16 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Response } from "../models/Response";
+import type { UserResponse } from "../models/UserResponse";
 import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 export class UsersService {
   /**
    * Get Current User Info
-   * @returns Response Successful Response
+   * @returns UserResponse Successful Response
    * @throws ApiError
    */
-  public static getCurrentUserInfoApiV1UsersMeGet(): CancelablePromise<Response> {
+  public static getCurrentUserInfoApiV1UsersMeGet(): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/users/me",
