@@ -15,9 +15,7 @@ export const backendURL = () => {
 };
 
 function getAuthHeaders() {
-  // const token = localStorage.getItem("accessToken");
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWNjZXNzX3Rva2VuIiwiZXhwIjoxNzE3Nzg2NTI1LCJpYXQiOjE3MTcwOTUzMjUsInN1YiI6IjY2NGVkMzZhZWE2MjllMzhkOTYzMWZiMyJ9.hHIbdzapdB4Ir1MUIdGHL8XtdB0Aaomb8c6PkiBSX4o";
+  const token = localStorage.getItem("accessToken");
   return {
     headers: {
       Authorization: `Bearer ${token}`,

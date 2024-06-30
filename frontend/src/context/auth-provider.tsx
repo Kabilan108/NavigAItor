@@ -25,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<AuthContextState["user"]>(undefined);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   function saveTokens() {
     const hash = new URL(window.location.href).hash;
@@ -49,31 +50,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const user = await client.getCurrentUser();
         if (user) {
           setUser(user);
+          setError(null);
         }
       } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          try {
-            if (!localStorage.getItem("refreshToken")) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 401) {
+            try {
+              if (!localStorage.getItem("refreshToken")) {
+                setUser(undefined);
+                return;
+              } else {
+                await client.refreshToken();
+                await fetchUser();
+              }
+            } catch (refreshError) {
               setUser(undefined);
-              return;
-            } else {
-              await client.refreshToken();
-              await fetchUser();
+              setError("Failed to refresh token");
             }
-          } catch (refreshError) {
-            console.error("Failed to refresh token:", refreshError);
+          } else if (error.response?.status === 422) {
             setUser(undefined);
+            setError("Invalid user data");
+          } else {
+            setUser(undefined);
+            setError("An unknown error occurred");
           }
         } else {
           setUser(undefined);
+          setError("An unknown error occurred");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUser();
-  }, []);
+    if (!error) {
+      fetchUser();
+    }
+  }, [error]);
 
   const login = () => client.logIn();
 
@@ -85,6 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     logout,
     saveTokens,
+    error,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
