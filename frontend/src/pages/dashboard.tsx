@@ -4,6 +4,8 @@ import LoadingSpinner from "@/components/ui/loading-spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 
+import { ChatContextProvider } from "@/context/chat-provider";
+
 import {
   KnowledgeBase,
   KnowledgeBaseDrawer,
@@ -21,10 +23,10 @@ function TabContent(props: Props) {
   switch (props.activeTab.id) {
     case Tabs.CHAT.id:
       return (
-        <>
+        <ChatContextProvider>
           <Header {...props} children={<ChatDrawer />} />
           <Chat {...props} />
-        </>
+        </ChatContextProvider>
       );
     case Tabs.KNOWLEDGE_BASE.id:
       return (
@@ -71,6 +73,8 @@ export default function Dashboard() {
   const { activeTab, setActiveTab } = useTabs();
 
   const props: Props = { activeTab, setActiveTab, user: user! };
+
+  console.log(user);
 
   // redirect only after loading
   if (!loading && user === undefined) {
