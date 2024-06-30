@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import * as Icons from "@/components/icons";
 
-import AttachFileTooltip from "@/components/dashboard/chat/attach-file-tooltip";
 import { type Message as MessageType, Role } from "@/client/generated";
-import { handleAttachFile } from "@/lib/chat";
+import Tooltip from "@/components/dashboard/tooltip";
+import { DocumentType } from "@/client/types";
+import { uploadDocument } from "@/client";
 
 interface Props {
   onSend: (message: MessageType) => void;
@@ -22,6 +23,32 @@ export default function MessageBox({ onSend }: Props) {
       onSend({ role: Role.USER, content });
       setContent("");
     }
+  };
+
+  const handleAttachFile = async (event: React.MouseEvent) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".pdf";
+    fileInput.multiple = false;
+
+    fileInput.onchange = async (event) => {
+      const file = fileInput?.files?.[0];
+      if (file) {
+        console.log("Uploading file:", file);
+        try {
+          const metadata = {
+            name: file.name,
+            document_type: DocumentType.SLIDES,
+            tags: ["inconversation"],
+          };
+          const response = await uploadDocument(file, metadata);
+          console.log("Response:", response);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
+      }
+    };
+    fileInput.click();
   };
 
   return (
@@ -40,7 +67,7 @@ export default function MessageBox({ onSend }: Props) {
         onChange={(e) => setContent(e.target.value)}
       />
       <div className="flex items-center p-3 pt-0">
-        <AttachFileTooltip onClick={handleAttachFile} />
+        <Tooltip type="attach" onClick={handleAttachFile} />
         <Button
           type="submit"
           size="sm"

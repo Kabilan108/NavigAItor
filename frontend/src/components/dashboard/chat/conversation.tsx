@@ -22,7 +22,7 @@ export function Message({ message }: { message: MessageType }) {
           isUser ? "justify-end" : "justify-start",
         )}
       >
-        {isUser ? null : <Icons.Bot className="size-7" />}
+        {isUser ? null : <Icons.Bot className="size-7 hidden" />}
         <div
           className={cn(
             "p-4 rounded-lg inline-block max-w-[80%]",
@@ -31,7 +31,7 @@ export function Message({ message }: { message: MessageType }) {
         >
           <Markdown content={message.content} />
         </div>
-        {isUser ? <Icons.User className="size-7" /> : null}
+        {isUser ? <Icons.User className="size-7 hidden" /> : null}
       </div>
     );
   }
@@ -50,7 +50,7 @@ export function Conversation({ messages }: Props) {
     <div className="flex-1">
       <div
         ref={containerRef}
-        className="flex flex-col gap-4 overflow-y-auto h-[calc(100vh-250px)] pr-2"
+        className="flex flex-col gap-4 overflow-y-auto h-[calc(100vh-300px)] pr-2"
       >
         {messages.map((message, index) => (
           <Message key={index} message={message} />

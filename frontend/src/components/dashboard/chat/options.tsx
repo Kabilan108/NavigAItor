@@ -1,127 +1,75 @@
+import { Badge } from "@/components/ui/badge";
 import {
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  Select,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
+import { useChatContext } from "@/context/chat-provider";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Chunk } from "@/client/types";
 
 interface Props {
   inDrawer?: boolean;
 }
 
+interface ImageProps {
+  base64: string;
+}
+
 export default function ChatOptions({ inDrawer }: Props) {
+  const { sources } = useChatContext();
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<Chunk | null>(null);
+
+  const handleDialogOpen = (source: Chunk) => {
+    setSelectedSource(source);
+    setIsOpenDialog(true);
+  };
+
+  const Base64Image: React.FC<ImageProps> = ({ base64 }) => {
+    return <img src={`data:image/png;base64,${base64}`} alt="Image" />;
+  };
+
   return (
-    <form
+    <div
       className={cn(
-        "grid w-full items-start gap-6",
-        inDrawer ? "overflow-auto p-4 pt-0" : "",
+        "w-full flex flex-col gap-4 rounded-lg overflow-y-auto p-6",
+        inDrawer ? "overflow-auto pt-0" : "",
       )}
     >
-      <fieldset className="grid gap-6 rounded-lg border p-4">
-        <legend className="-ml-1 px-1 text-sm font-medium">Settings</legend>
-        <div className="grid gap-3">
-          <Label htmlFor="model">Model</Label>
-          <Select>
-            <SelectTrigger
-              id="model"
-              className="items-start [&_[data-description]]:hidden"
-            >
-              <SelectValue placeholder="Select a model" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="genesis">
-                <div className="flex items-start gap-3 text-muted-foreground">
-                  <div className="grid gap-0.5">
-                    <p>
-                      Neural{" "}
-                      <span className="font-medium text-foreground">
-                        Genesis
-                      </span>
-                    </p>
-                    <p className="text-xs" data-description>
-                      Our fastest model for general use cases.
-                    </p>
-                  </div>
-                </div>
-              </SelectItem>
-              <SelectItem value="explorer">
-                <div className="flex items-start gap-3 text-muted-foreground">
-                  <div className="grid gap-0.5">
-                    <p>
-                      Neural{" "}
-                      <span className="font-medium text-foreground">
-                        Explorer
-                      </span>
-                    </p>
-                    <p className="text-xs" data-description>
-                      Performance and speed for efficiency.
-                    </p>
-                  </div>
-                </div>
-              </SelectItem>
-              <SelectItem value="quantum">
-                <div className="flex items-start gap-3 text-muted-foreground">
-                  <div className="grid gap-0.5">
-                    <p>
-                      Neural{" "}
-                      <span className="font-medium text-foreground">
-                        Quantum
-                      </span>
-                    </p>
-                    <p className="text-xs" data-description>
-                      The most powerful model for complex computations.
-                    </p>
-                  </div>
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+      {sources.map((source, index) => (
+        <div
+          key={index}
+          className="p-4 rounded-lg w-full bg-muted-foreground text-center active:bg-popover"
+          onClick={() => handleDialogOpen(source)}
+        >
+          <h3 className="text-500 font-bold">
+            {source.document_name.split(".")[0]}
+          </h3>
+          <p className="text-300">{source.title}</p>
+          <Badge className="bg-[#2a9d8f]">#{source.tags[0]}</Badge>
         </div>
-        <div className="grid gap-3">
-          <Label htmlFor="temperature">Temperature</Label>
-          <Input id="temperature" type="number" placeholder="0.4" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-3">
-            <Label htmlFor="top-p">Top P</Label>
-            <Input id="top-p" type="number" placeholder="0.7" />
+      ))}
+      <Dialog open={isOpenDialog} onOpenChange={setIsOpenDialog}>
+        <DialogContent className="overflow-auto max-h-[80%] overflow-y-auto bg-slate-900">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedSource?.document_name.split(".")[0]}
+            </DialogTitle>
+            <DialogDescription>{selectedSource?.title}</DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <p className="text-200">{selectedSource?.text}</p>
+            {selectedSource?.image && (
+              <Base64Image base64={selectedSource?.image} />
+            )}
           </div>
-          <div className="grid gap-3">
-            <Label htmlFor="top-k">Top K</Label>
-            <Input id="top-k" type="number" placeholder="0.0" />
-          </div>
-        </div>
-      </fieldset>
-      <fieldset className="grid gap-6 rounded-lg border p-4">
-        <legend className="-ml-1 px-1 text-sm font-medium">Messages</legend>
-        <div className="grid gap-3">
-          <Label htmlFor="role">Role</Label>
-          <Select defaultValue="system">
-            <SelectTrigger>
-              <SelectValue placeholder="Select a role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="system">System</SelectItem>
-              <SelectItem value="user">User</SelectItem>
-              <SelectItem value="assistant">Assistant</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid gap-3">
-          <Label htmlFor="content">Content</Label>
-          <Textarea
-            id="content"
-            placeholder="You are a..."
-            className="min-h-[9.5rem]"
-          />
-        </div>
-      </fieldset>
-    </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
