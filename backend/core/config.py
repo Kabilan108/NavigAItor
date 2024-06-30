@@ -11,6 +11,7 @@ ROOT = Path(__file__).parent.parent
 
 
 class Settings(BaseSettings):
+    TEMP_DIR: str = "navigaitor"
     API_PATH: str | None = "/api/v1"
     # SECRET_KEY: str
 
@@ -36,6 +37,11 @@ class Settings(BaseSettings):
     AWS_BUCKET: str
 
     LOGFIRE_TOKEN: str
+
+    ANTHROPIC_API_KEY: str | None = None
+    OPENROUTER_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
+    COHERE_API_KEY: str | None = None
 
     class Config:
         case_sensitive = True

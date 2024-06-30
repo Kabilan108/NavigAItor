@@ -22,7 +22,10 @@ app.add_middleware(SessionMiddleware, secret_key=settings.SESSION_TOKEN)
 if settings.CLIENT_URL:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[settings.CLIENT_URL],
+        allow_origins=[
+            settings.CLIENT_URL,
+            "http://100.99.171.107:3000",
+        ],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

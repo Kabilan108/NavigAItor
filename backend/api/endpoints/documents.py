@@ -24,7 +24,7 @@ default = {
 @router.post("/upload", response_model=Response)
 async def upload_document(
     file: UploadFile,
-    metadata: DocumentMetadataUpload | None = None,
+    metadata: DocumentMetadataUpload,
     user: OAuthUserInDB = Depends(get_current_user),
     s3: docstore.Client = Depends(docstore.create_client),
     db: mongo.AsyncClient = Depends(mongo.get_db),
@@ -34,11 +34,11 @@ async def upload_document(
     doc = await docstore.upload_doc(
         user_id=user.id,
         conversation_id=conversation_id,
-        bucket=settings.AWS_BUCKET,
         metadata=metadata.model_dump() if metadata else {},
         file=file,
         client=s3,
         db=db,
+        settings=settings,
     )
     return {"message": "Document uploaded", "data": {"document_id": doc.id}}
 

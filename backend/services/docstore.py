@@ -3,6 +3,9 @@ from botocore.client import BaseClient as Client
 import boto3
 import uuid
 
+from pathlib import Path
+import tempfile
+
 from core.config import Settings, get_settings
 from core import crud
 from schema.documents import (
@@ -32,18 +35,18 @@ def generate_file_name(user_id: str, file_name: str) -> str:
 async def upload_doc(
     user_id: str,
     conversation_id: str,
-    bucket: str,
     metadata: dict,
     file: UploadFile,
     client: Client,
     db: mongo.AsyncClient,
+    settings: Settings,
 ):
     """Create document metadata"""
 
     object_key = generate_file_name(user_id, file.filename)
 
     try:
-        client.upload_fileobj(file.file, bucket, object_key)
+        client.upload_fileobj(file.file, settings.AWS_BUCKET, object_key)
     except Exception as e:
         raise_upload_error(e)
 
@@ -67,6 +70,27 @@ async def upload_doc(
         raise_upload_error(e)
 
     return doc
+
+
+def get_temp_file_path(file_name: str, settings: Settings) -> str:
+    path = Path(tempfile.gettempdir()) / settings.TEMP_DIR / file_name
+    if not path.parent.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+async def download_doc(
+    doc_id: str,
+    user_id: str,
+    db: mongo.AsyncClient,
+    client: Client,
+    settings: Settings,
+) -> dict:
+    """Download document from S3"""
+    doc = await get_doc(doc_id, user_id, db)
+    filepath = get_temp_file_path(doc.object_key, settings)
+    client.download_file(settings.AWS_BUCKET, doc.object_key, filepath)
+    return doc, filepath
 
 
 async def get_doc(doc_id: str, user_id: str, db: mongo.AsyncClient) -> Document:
