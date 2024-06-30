@@ -46,3 +46,6 @@ next-env.d.ts
 __pycache__/
 .ruff_cache/
 .venv/
+
+# data
+data/
