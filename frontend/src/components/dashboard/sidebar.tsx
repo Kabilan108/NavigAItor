@@ -18,6 +18,10 @@ export default function Sidebar(props: Props) {
       <nav className="grid gap-1 p-2">
         {Object.values(Tabs).map((tab, index) => {
           if (tab !== Tabs.SETTINGS) {
+            const disable = tab !== Tabs.CHAT && tab !== Tabs.KNOWLEDGE_BASE;
+            if (disable) {
+              return null;
+            }
             return <SidebarTooltip key={index} tab={tab} {...props} />;
           }
         })}

@@ -18,12 +18,16 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+import Tooltip from "@/components/dashboard/tooltip";
+
+import { deleteDocument } from "@/client";
 import { type Document, DocumentType } from "@/lib/utils";
 
 const METADATA_FIELDS = [
   { key: "name", name: "Name", className: "" },
   { key: "document_type", name: "Type", className: "" },
   { key: "tags", name: "Tags", className: "" },
+  { key: "delete", name: "", className: "" },
 ];
 
 const BadgeColors = {
@@ -33,6 +37,7 @@ const BadgeColors = {
     [DocumentType.RECORDING]: "bg-[#e9c46a]",
     test: "bg-[#2a9d8f]",
   },
+  tags: "bg-[#2a9d8f]",
 };
 
 // TODO: dialog needs to get the document passed to it
@@ -42,31 +47,55 @@ const BadgeColors = {
 const DocumentEntry = ({
   document,
   handleTriggerDialog,
+  onDelete,
 }: {
   document: Document;
   handleTriggerDialog: () => void;
+  onDelete: (id: string) => void;
 }) => {
   const handleRowClick = () => {
     handleTriggerDialog();
   };
+
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    try {
+      const response = await deleteDocument(document.id);
+      onDelete(document.id);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const badge = (field: (typeof METADATA_FIELDS)[number]) => (
+    <Badge
+      className={
+        field.key === "document_type"
+          ? BadgeColors[field.key][document.metadata[field.key]]
+          : BadgeColors[field.key]
+      }
+    >
+      {field.key === "document_type"
+        ? document.metadata[field.key]
+        : `#${document.metadata[field.key]}`}
+    </Badge>
+  );
 
   return (
     <TableRow onClick={handleRowClick}>
       {METADATA_FIELDS.map((field) => {
         return (
           <TableCell key={field.key} className={field.className}>
-            {field.key === "document_type" ? (
-              <Badge
-                className={BadgeColors[field.key][document.metadata[field.key]]}
-              >
-                {document.metadata[field.key]}
-              </Badge>
-            ) : (
-              document.metadata[field.key]
-            )}
+            {field.key === "document_type" || field.key === "tags"
+              ? badge(field)
+              : document.metadata[field.key]}
           </TableCell>
         );
       })}
+      <TableCell>
+        <Tooltip type="delete" onClick={handleDelete} />
+      </TableCell>
     </TableRow>
   );
 };
@@ -75,13 +104,16 @@ const DocumentTable = ({
   documents,
   isOpenDialog,
   setIsOpenDialog,
+  onDelete,
 }: {
   documents: Document[];
   isOpenDialog: boolean;
   setIsOpenDialog: (value: boolean) => void;
+  onDelete: (id: string) => void;
 }) => {
   const handleTriggerDialog = () => {
-    setIsOpenDialog(!isOpenDialog);
+    // setIsOpenDialog(!isOpenDialog);
+    setIsOpenDialog(false);
   };
 
   return (
@@ -102,6 +134,7 @@ const DocumentTable = ({
               key={document.id}
               document={document}
               handleTriggerDialog={handleTriggerDialog}
+              onDelete={onDelete}
             />
           ))}
           <DialogContent>
@@ -117,9 +150,10 @@ const DocumentTable = ({
 
 interface Props {
   documents: Document[];
+  onDelete: (id: string) => void;
 }
 
-export default function Documents({ documents }: Props) {
+export default function Documents({ documents, onDelete }: Props) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
 
   return (
@@ -132,6 +166,7 @@ export default function Documents({ documents }: Props) {
         documents={documents}
         isOpenDialog={isOpenDialog}
         setIsOpenDialog={setIsOpenDialog}
+        onDelete={onDelete}
       />
     </Card>
   );

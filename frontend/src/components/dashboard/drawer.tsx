@@ -20,9 +20,9 @@ export default function Drawer({ children }: { children: React.ReactNode }) {
       </DrawerTrigger>
       <DrawerContent className="max-h-[80vh]">
         <DrawerHeader>
-          <DrawerTitle>Chat Settings</DrawerTitle>
+          <DrawerTitle>Sources</DrawerTitle>
           <DrawerDescription>
-            Configure the settings for the model and messages.
+            View the sources that the model used to generate its answer.
           </DrawerDescription>
         </DrawerHeader>
         {children}

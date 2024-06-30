@@ -11,6 +11,7 @@ import {
   Paperclip,
   Settings as SettingsIcon,
   Settings2,
+  Trash2,
   SunMedium,
   User as UserIcon,
 } from "lucide-react";
@@ -29,6 +30,7 @@ export const User = UserIcon;
 export const Bot = BotIcon;
 export const AttachFile = Paperclip;
 export const Send = CornerDownLeft;
+export const Delete = Trash2;
 
 export const Logo = (props: LucideProps) => (
   <svg

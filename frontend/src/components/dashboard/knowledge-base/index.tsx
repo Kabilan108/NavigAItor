@@ -36,9 +36,14 @@ export function KnowledgeBase(props: Props) {
     fetchDocuments();
   }, []);
 
+  const handleDeleteDocument = (id: string) => {
+    setDocuments((currentDocs) => currentDocs.filter((doc) => doc.id !== id));
+  };
+
   return (
     <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
-      <div className="relative flex flex-col rounded-xl bg-background p-4 lg:col-span-2">
+      {/* <div className="relative flex flex-col rounded-xl bg-background p-4 lg:col-span-2"> */}
+      <div className="relative flex flex-col rounded-xl bg-background p-4 lg:col-span-3">
         <Tabs defaultValue="documents-view">
           <TabsList className="flex justify-center mx-auto max-w-[200px]">
             <TabsTrigger value="documents-view">Documents</TabsTrigger>
@@ -47,11 +52,11 @@ export function KnowledgeBase(props: Props) {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="documents-view">
-            <Documents documents={documents} />
+            <Documents documents={documents} onDelete={handleDeleteDocument} />
           </TabsContent>
         </Tabs>
       </div>
-      <RightPanel />
+      {/* <RightPanel /> */}
     </main>
   );
 }
