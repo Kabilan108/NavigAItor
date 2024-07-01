@@ -12,6 +12,6 @@ def get_db_sync(settings: Settings = Depends(get_settings)) -> Client:
 
 
 async def get_db(settings: Settings = Depends(get_settings)) -> AsyncClient:
-    client = AsyncClient(settings.MONGO_URI)
+    client = AsyncClient(settings.MONGO_URI, uuidRepresentation="standard")
     db = client[settings.MONGO_DB]
     return db

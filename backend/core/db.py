@@ -1,24 +1,10 @@
-from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import MongoClient
-from fastapi import Depends
 from pydantic import Field
 
 from fastapi_users.db import BaseOAuthAccount, BeanieBaseUser, BeanieUserDatabase
 from beanie import Document, init_beanie
 
-from core.config import Settings, get_settings
-
-
-def get_db_sync(settings: Settings = Depends(get_settings)) -> MongoClient:
-    client = MongoClient(settings.MONGO_URI)
-    db = client[settings.MONGO_DB]
-    return db
-
-
-async def get_db(settings: Settings = Depends(get_settings)) -> AsyncIOMotorClient:
-    client = AsyncIOMotorClient(settings.MONGO_URI, uuidRepresentation="standard")
-    db = client[settings.MONGO_DB]
-    return db
+from core.config import get_settings
+from services.mongo import get_db
 
 
 class OAuthAccount(BaseOAuthAccount):
