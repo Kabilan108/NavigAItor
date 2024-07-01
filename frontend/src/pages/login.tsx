@@ -1,8 +1,10 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/lib/context";
+import { useAuth } from "@/lib/hooks";
 
 import { Button } from "@/components/ui/button";
 import * as Icons from "@/components/icons";
+
+import { AuthProviders } from "@/client/types";
 
 export default function LoginPage() {
   const { user, login } = useAuth();
@@ -13,7 +15,7 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     try {
-      login();
+      await login(AuthProviders.GOOGLE);
     } catch (error) {
       console.error(`Login failed: ${error}`);
     }

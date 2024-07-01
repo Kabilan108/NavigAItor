@@ -1,20 +1,28 @@
-import {
-  DocumentMetadata as DocumentMetadataGenerated,
-  Response,
-} from "@/client/generated";
+export enum AuthProviders {
+  CREDENTIALS = "credentials",
+  GOOGLE = "google",
+}
+
+export interface AuthData {
+  email: string;
+  password: string;
+}
 
 export interface User {
   id: string;
-  sub: string;
   email: string;
-  email_verified: boolean;
-  name: string;
-  picture: string;
-  given_name: string;
-  family_name: string;
-  created_at: string;
-  updated_at: string;
-  last_login: string;
+  is_active: boolean;
+  is_superuser: boolean;
+  is_verified: boolean;
+  // sub: string;
+  // email_verified: boolean;
+  // name: string;
+  // picture: string;
+  // given_name: string;
+  // family_name: string;
+  // created_at: string;
+  // updated_at: string;
+  // last_login: string;
 }
 
 export enum DocumentType {
@@ -24,8 +32,30 @@ export enum DocumentType {
   UPLOAD = "upload",
 }
 
-export type ClientResponse = Response;
-export type DocumentMetadata = DocumentMetadataGenerated;
+export interface Document {
+  id: string;
+  user_id: string;
+  conversation_id: string;
+  file_type: string;
+  object_key: string;
+  metadata: {
+    [key: string]: string | string[];
+    name: string;
+    document_type: DocumentType;
+    tags: string[];
+  };
+}
+
+export type ClientResponse = {
+  message?: string;
+  data?: Record<string, unknown> | object | null;
+};
+
+export type DocumentMetadata = {
+  name: string;
+  tags?: Array<string>;
+  document_type: DocumentType;
+};
 
 export interface Chunk {
   document_id: string;

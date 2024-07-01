@@ -7,7 +7,7 @@ import ChatOptions from "@/components/dashboard/chat/options";
 import Drawer from "@/components/dashboard/drawer";
 import { useChatContext } from "@/context/chat-provider";
 
-import { type Message_Input as MessageType, Role } from "@/client/generated";
+import { type Message_Input as MessageType, Role } from "@/generated";
 import { type SharedProps } from "@/lib/utils";
 import { sendChatMessage } from "@/client";
 import { Chunk } from "@/client/types";

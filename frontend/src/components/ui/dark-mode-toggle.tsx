@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "@/lib/context";
+import { useTheme } from "@/lib/hooks";
 
 export default function DarkModeToggle() {
   const { setTheme } = useTheme();

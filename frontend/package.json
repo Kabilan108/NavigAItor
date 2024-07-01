@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "serve": "serve -s dist -p 3000",
-    "generate.client": "openapi --input http://0.0.0.0:8000/api/v1/openapi.json --output ./src/client/generated --client axios --useOptions"
+    "generate.client": "openapi --input http://0.0.0.0:8000/api/v1/openapi.json --output ./src/generated --client axios --useOptions"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.0.4",

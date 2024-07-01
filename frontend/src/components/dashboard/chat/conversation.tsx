@@ -3,7 +3,7 @@ import { useRef, useEffect } from "react";
 import Markdown from "@/components/dashboard/chat/markdown";
 import * as Icons from "@/components/icons";
 
-import { type Message as MessageType, Role } from "@/client/generated";
+import { type Message as MessageType, Role } from "@/generated";
 import { cn } from "@/lib/utils";
 
 interface Props {

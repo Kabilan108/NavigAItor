@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import Tooltip from "@/components/dashboard/tooltip";
 
 import { deleteDocument } from "@/client";
-import { type Document, DocumentType } from "@/lib/utils";
+import { type Document, DocumentType } from "@/client/types";
 
 const METADATA_FIELDS = [
   { key: "name", name: "Name", className: "" },
@@ -35,7 +35,7 @@ const BadgeColors = {
     [DocumentType.SLIDES]: "bg-[#e9795d]",
     [DocumentType.DOCUMENT]: "bg-[#f4a261]",
     [DocumentType.RECORDING]: "bg-[#e9c46a]",
-    test: "bg-[#2a9d8f]",
+    [DocumentType.UPLOAD]: "bg-[#2a9d8f]",
   },
   tags: "bg-[#2a9d8f]",
 };

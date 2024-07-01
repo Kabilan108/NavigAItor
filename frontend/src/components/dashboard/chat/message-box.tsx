@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import * as Icons from "@/components/icons";
 
-import { type Message as MessageType, Role } from "@/client/generated";
+import { type Message as MessageType, Role } from "@/generated";
 import Tooltip from "@/components/dashboard/tooltip";
 import { DocumentType } from "@/client/types";
 import { uploadDocument } from "@/client";

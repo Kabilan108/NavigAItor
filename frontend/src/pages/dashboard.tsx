@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 
-import LoadingSpinner from "@/components/ui/loading-spinner";
+// import LoadingSpinner from "@/components/ui/loading-spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -15,7 +15,7 @@ import Sidebar from "@/components/dashboard/sidebar";
 import Header from "@/components/dashboard/header";
 
 import { type SharedProps, Tabs } from "@/lib/utils";
-import { useAuth, useTabs } from "@/lib/context";
+import { useAuth, useTabs } from "@/lib/hooks";
 
 interface Props extends SharedProps {}
 
@@ -69,22 +69,17 @@ function TabContent(props: Props) {
 }
 
 export default function Dashboard() {
-  const { user, loading } = useAuth();
+  const { checkAuth, user } = useAuth();
   const { activeTab, setActiveTab } = useTabs();
 
   const props: Props = { activeTab, setActiveTab, user: user! };
 
-  console.log(user);
-
   // redirect only after loading
-  if (!loading && user === undefined) {
+  if (!checkAuth()) {
     return <Navigate to="/login" />;
   }
 
-  // render the rest of the component only after loading
-  if (loading || user === undefined) {
-    return <LoadingSpinner />;
-  }
+  // TODO: loading
 
   return (
     <TooltipProvider>
