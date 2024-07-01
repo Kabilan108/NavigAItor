@@ -36,10 +36,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (provider: AuthProviders, data?: AuthData) => {
-    if (provider === AuthProviders.CREDENTIALS && data) {
-      await client.credentialsLogin(data);
-    } else if (provider === AuthProviders.GOOGLE) {
-      await client.startGoogleOAuthFlow();
+    try {
+      if (provider === AuthProviders.CREDENTIALS && data) {
+        await client.credentialsLogin(data);
+        const currentUser = await client.getCurrentUser();
+        setUser(currentUser);
+      } else if (provider === AuthProviders.GOOGLE) {
+        await client.startGoogleOAuthFlow();
+      }
+    } catch (error) {
+      console.error(`Login failed: ${error}`);
     }
   };
 

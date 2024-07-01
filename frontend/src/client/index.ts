@@ -45,8 +45,19 @@ export const refreshToken = async (): Promise<void> => {
 };
 
 export const credentialsLogin = async (data: AuthData): Promise<void> => {
-  // TODO: send form data via POST to /auth/jwt/login
-  return;
+  const formData = new URLSearchParams();
+  formData.append("username", data.username);
+  formData.append("password", data.password);
+
+  const response = await axios.post(getEndpoint("/auth/jwt/login"), formData, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  });
+  if (response.status !== 200) {
+    throw new Error("Failed to login");
+  }
+  localStorage.setItem("accessToken", response.data.access_token);
 };
 
 export const logout = async (): Promise<void> => {
