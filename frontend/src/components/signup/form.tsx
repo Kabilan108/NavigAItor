@@ -13,25 +13,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import * as Icons from "@/components/icons";
 
-import { AuthProviders, LoginData } from "@/client/types";
+import { AuthProviders, LoginData, SignupData } from "@/client/types";
 
 export default function LoginForm({
   login,
+  signup,
 }: {
   login: (provider: AuthProviders, data?: LoginData) => Promise<void>;
+  signup: (data: SignupData) => Promise<void>;
 }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
   const navigate = useNavigate();
 
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(AuthProviders.CREDENTIALS, { username, password });
-      navigate("/app");
+      await signup({ email, password, first_name, last_name });
+      navigate("/login");
     } catch (error) {
       console.error(`Login failed: ${error}`);
     }
+    return;
   };
 
   const handleGoogleLogin = async () => {
@@ -45,30 +50,47 @@ export default function LoginForm({
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-xl">Sign Up</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Enter your information to create an account
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleCredentialsLogin} className="grid gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="first-name">First name</Label>
+              <Input
+                id="first-name"
+                placeholder="Max"
+                required
+                value={first_name}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="last-name">Last name</Label>
+              <Input
+                id="last-name"
+                placeholder="Robinson"
+                required
+                value={last_name}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               type="email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="m@example.com"
               required
             />
           </div>
           <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <a href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </a>
-            </div>
+            <Label htmlFor="password">Password</Label>
             <Input
               type="password"
               value={password}
@@ -77,7 +99,7 @@ export default function LoginForm({
             />
           </div>
           <Button type="submit" className="w-full">
-            Login
+            Create an Account
           </Button>
           <Button
             type="button"
@@ -89,9 +111,9 @@ export default function LoginForm({
           </Button>
         </form>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <a href="/signup" className="underline">
-            Sign up
+          Already have an account?{" "}
+          <a href="/login" className="underline">
+            Login
           </a>
         </div>
       </CardContent>

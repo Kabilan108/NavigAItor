@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import OAuthCallback from "@/pages/oauth-callback";
 import Dashboard from "@/pages/dashboard";
 import LandingPage from "@/pages/landing";
+import SignupPage from "@/pages/signup";
 import LoginPage from "@/pages/login";
 
 import { ThemeProvider } from "@/context/theme-provider";
@@ -34,6 +35,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/app" element={<Dashboard />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/oauth-callback" element={<OAuthCallback />} />
             </Routes>

@@ -3,9 +3,16 @@ export enum AuthProviders {
   GOOGLE = "google",
 }
 
-export interface AuthData {
+export interface LoginData {
   username: string;
   password: string;
+}
+
+export interface SignupData {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
 }
 
 export interface User {

@@ -1,12 +1,14 @@
 import React, { createContext, useState, useEffect } from "react";
 
+import type { User, LoginData, SignupData } from "@/client/types";
+import { AuthProviders } from "@/client/types";
 import * as client from "@/client";
-import { type User, type AuthData, AuthProviders } from "@/client/types";
 
 interface AuthContextType {
   user: User | undefined;
-  login: (provider: AuthProviders, data?: AuthData) => Promise<void>;
+  login: (provider: AuthProviders, data?: LoginData) => Promise<void>;
   logout: () => Promise<void>;
+  signup: (data: SignupData) => Promise<void>;
   checkAuth: () => boolean;
 }
 
@@ -14,6 +16,7 @@ export const AuthContext = createContext<AuthContextType>({
   user: undefined,
   login: async () => {},
   logout: async () => {},
+  signup: async () => {},
   checkAuth: () => false,
 });
 
@@ -35,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchUser();
   }, []);
 
-  const login = async (provider: AuthProviders, data?: AuthData) => {
+  const login = async (provider: AuthProviders, data?: LoginData) => {
     try {
       if (provider === AuthProviders.CREDENTIALS && data) {
         await client.credentialsLogin(data);
@@ -51,6 +54,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => client.logout();
 
+  const signup = async (data: SignupData) => client.credentialsSignup(data);
+
   const checkAuth = () => {
     // TODO: figure out what to do when token is expired
     const accessToken = localStorage.getItem("accessToken");
@@ -64,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     user,
     login,
     logout,
+    signup,
     checkAuth,
   };
 

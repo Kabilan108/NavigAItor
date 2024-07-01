@@ -4,7 +4,8 @@ import type {
   ClientResponse,
   DocumentMetadata,
   User,
-  AuthData,
+  LoginData,
+  SignupData,
 } from "@/client/types";
 import { Message } from "@/generated";
 
@@ -44,7 +45,7 @@ export const refreshToken = async (): Promise<void> => {
   }
 };
 
-export const credentialsLogin = async (data: AuthData): Promise<void> => {
+export const credentialsLogin = async (data: LoginData): Promise<void> => {
   const formData = new URLSearchParams();
   formData.append("username", data.username);
   formData.append("password", data.password);
@@ -58,6 +59,17 @@ export const credentialsLogin = async (data: AuthData): Promise<void> => {
     throw new Error("Failed to login");
   }
   localStorage.setItem("accessToken", response.data.access_token);
+};
+
+export const credentialsSignup = async (data: SignupData): Promise<void> => {
+  const response = await axios.post(getEndpoint("/auth/register"), data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (response.status !== 201) {
+    throw new Error("Failed to signup");
+  }
 };
 
 export const logout = async (): Promise<void> => {
