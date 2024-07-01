@@ -12,6 +12,8 @@ class OAuthAccount(BaseOAuthAccount):
 
 
 class User(BeanieBaseUser, Document):
+    first_name: str = ""
+    last_name: str = ""
     oauth_accounts: list[OAuthAccount] = Field(default_factory=list)
 
 
