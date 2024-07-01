@@ -32,7 +32,7 @@ async def upload_document(
 ) -> dict:
     conversation_id = None
     doc = await docstore.upload_doc(
-        user_id=user.id,
+        user_id=str(user.id),
         conversation_id=conversation_id,
         metadata=metadata.model_dump() if metadata else {},
         file=file,
@@ -52,7 +52,7 @@ async def delete_document(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     await docstore.delete_doc(
-        user_id=user.id,
+        user_id=str(user.id),
         doc_id=document_id,
         bucket=settings.AWS_BUCKET,
         client=s3,
@@ -66,7 +66,7 @@ async def list_documents(
     user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> list[Document]:
-    return await docstore.list_docs(user_id=user.id, db=db)
+    return await docstore.list_docs(user_id=str(user.id), db=db)
 
 
 @router.get("/{document_id}")
@@ -75,7 +75,7 @@ async def get_document(
     user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> Document:
-    return await docstore.get_doc(user_id=user.id, doc_id=document_id, db=db)
+    return await docstore.get_doc(user_id=str(user.id), doc_id=document_id, db=db)
 
 
 @router.put("/{document_id}")
@@ -89,7 +89,7 @@ async def update_document(
         doc = await crud.update_document(
             db=db,
             doc_id=document_id,
-            user_id=user.id,
+            user_id=str(user.id),
             doc_update=document_update,
         )
         return {"message": "Document updated", "data": doc}

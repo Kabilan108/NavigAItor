@@ -15,7 +15,7 @@ async def get_conversation(
     user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> ConversationInDB:
-    return await crud.get_conversation(db, conversation_id, user.id)
+    return await crud.get_conversation(db, conversation_id, str(user.id))
 
 
 @router.put("/{conversation_id}")
@@ -25,7 +25,7 @@ async def update_conversation(
     user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> ConversationInDB:
-    return await crud.update_conversation(db, conversation_id, user.id, update)
+    return await crud.update_conversation(db, conversation_id, str(user.id), update)
 
 
 @router.delete("/{conversation_id}")
@@ -34,7 +34,7 @@ async def delete_conversation(
     user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> None:
-    await crud.delete_conversation(db, conversation_id, user.id)
+    await crud.delete_conversation(db, conversation_id, str(user.id))
 
 
 # @router.post("/{conversation_id}/messages")
@@ -44,4 +44,4 @@ async def delete_conversation(
 #     user: User = Depends(get_current_user),
 #     db: mongo.AsyncClient = Depends(mongo.get_db),
 # ) -> MessageInDB:
-#     return crud.create_message(db, conversation_id, user.id, message)
+#     return crud.create_message(db, conversation_id, str(user.id), message)
