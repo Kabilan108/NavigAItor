@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     SESSION_TOKEN: str
     COOKIE_DOMAIN: str | None = None
 
+    GOOGLE_OAUTH_CLIENT_ID: str
+    GOOGLE_OAUTH_CLIENT_SECRET: str
+
     AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: str
     AWS_REGION: str
@@ -69,4 +72,4 @@ def get_settings():
     return Settings()
 
 
-settings = Settings()
+settings = get_settings()

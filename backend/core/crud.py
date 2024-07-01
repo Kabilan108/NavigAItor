@@ -1,33 +1,8 @@
 from bson.objectid import ObjectId
 
-from schema.auth import OAuthUserInDB, NewOAuthUser, raise_auth_failure
 from schema.conversations import ConversationInDB, NewConversation, UpdateConversation
 from schema.documents import Document, NewDocument
 from services.mongo import AsyncClient
-
-
-async def create_user(db: AsyncClient, user: NewOAuthUser) -> OAuthUserInDB:
-    inserted = await db.users.insert_one(user.model_dump())
-    return OAuthUserInDB(**user.model_dump(), _id=inserted.inserted_id)
-
-
-async def get_user(db: AsyncClient, user_id: str) -> OAuthUserInDB:
-    user = await db.users.find_one({"_id": ObjectId(user_id)})
-    if not user:
-        raise_auth_failure("User not found")
-    return OAuthUserInDB(**user)
-
-
-async def update_user(
-    db: AsyncClient, user_id: str, user_update: dict
-) -> OAuthUserInDB:
-    await db.users.update_one({"_id": ObjectId(user_id)}, {"$set": user_update})
-    updated_user_data = await db.users.find_one({"_id": ObjectId(user_id)})
-    return OAuthUserInDB(**updated_user_data)
-
-
-async def delete_user(db: AsyncClient, user_id: str):
-    await db.users.delete_one({"_id": ObjectId(user_id)})
 
 
 async def create_document(db: AsyncClient, doc: NewDocument) -> Document:

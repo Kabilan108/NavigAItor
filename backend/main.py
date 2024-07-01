@@ -3,10 +3,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 import logfire
 
+from contextlib import asynccontextmanager
 import time
 
 from core.config import settings
+from core.db import init_db
 from api import api_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
 
 
 app = FastAPI(
@@ -15,6 +23,7 @@ app = FastAPI(
     # docs_url=f"{settings.API_PATH}/docs",
     # redoc_url=f"{settings.API_PATH}/redoc",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(SessionMiddleware, secret_key=settings.SESSION_TOKEN)

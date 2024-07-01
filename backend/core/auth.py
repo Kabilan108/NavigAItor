@@ -1,119 +1,109 @@
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from authlib.integrations.starlette_client import OAuth
-from starlette.config import Config
-from jose import jwt, JWTError
-from fastapi import Depends
+from fastapi_users.authentication import (
+    AuthenticationBackend,
+    BearerTransport,
+    JWTStrategy,
+)
+from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
+from fastapi_users import BaseUserManager, FastAPIUsers
+from httpx_oauth.clients.google import GoogleOAuth2
+from fastapi import APIRouter, Depends, Request
+from beanie import PydanticObjectId
 
-from datetime import datetime, timedelta
-from typing import MutableMapping
-
-from schema.auth import OAuthUser, OAuthUserInDB, NewOAuthUser, raise_auth_failure
-from api.deps import AsyncIOMotorClient
+from schema.auth import UserCreate, UserRead, UserUpdate
+from core.db import User, get_user_db
 from core.config import settings
-from services import mongo
-from core import crud
 
-config = Config()
-oauth = OAuth(config)
 
-CONF_URL = "https://accounts.google.com/.well-known/openid-configuration"
-oauth.register(
-    name="google",
-    server_metadata_url=CONF_URL,
-    client_kwargs={"scope": "openid email profile"},
+class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
+    reset_password_token_secret = settings.AUTH_SECRET_KEY
+    verification_token_secret = settings.AUTH_SECRET_KEY
+
+    async def on_after_register(self, user: User, request: Request | None = None):
+        # TODO: send request for verification token
+        print(f"User {user.id} has registered.")
+
+    async def on_after_forgot_password(
+        self, user: User, token: str, request: Request | None = None
+    ):
+        # TODO: send email with reset token
+        print(f"User {user.id} has forgot their password. Reset token: {token}")
+
+    async def on_after_request_verify(
+        self, user: User, token: str, request: Request | None = None
+    ):
+        # TODO: send email with verification token
+        print(f"Verification requested for user {user.id}. Verification token: {token}")
+
+
+async def get_user_manager(user_db: BeanieUserDatabase = Depends(get_user_db)):
+    yield UserManager(user_db)
+
+
+def get_jwt_strategy() -> JWTStrategy:
+    return JWTStrategy(secret=settings.AUTH_SECRET_KEY, lifetime_seconds=3600)
+
+
+bearer_transport = BearerTransport(tokenUrl="/api/v1/auth/jwt/login")
+
+google_oauth_client = GoogleOAuth2(
+    client_id=settings.GOOGLE_OAUTH_CLIENT_ID,
+    client_secret=settings.GOOGLE_OAUTH_CLIENT_SECRET,
 )
 
-JWTPayLoad = MutableMapping[str, datetime | bool | str | list[str] | list[int]]
-auth_scheme = HTTPBearer()
+auth_backend = AuthenticationBackend(
+    name="jwt",
+    transport=bearer_transport,
+    get_strategy=get_jwt_strategy,
+)
+
+fastapi_users = FastAPIUsers[User, PydanticObjectId](
+    get_user_manager,
+    [auth_backend],
+)
+
+get_current_user = fastapi_users.current_user(optional=False, active=True)
 
 
-def _create_token(
-    token_type: str,
-    lifetime: timedelta,
-    sub: str,
-) -> str:
-    payload = {}
-    expire = datetime.utcnow() + lifetime
-    payload["type"] = token_type
-    payload["exp"] = expire
-    payload["iat"] = datetime.utcnow()
-    payload["sub"] = str(sub)
-    return jwt.encode(
-        payload, settings.AUTH_SECRET_KEY, algorithm=settings.AUTH_ALGORITHM
+def mount_auth_endpoints(app: APIRouter):
+    app.include_router(
+        fastapi_users.get_auth_router(auth_backend),
+        prefix="/auth/jwt",
+        tags=["auth"],
     )
 
-
-def create_access_token(*, sub: str) -> str:
-    return _create_token(
-        token_type="access_token",
-        lifetime=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
-        sub=sub,
+    app.include_router(
+        fastapi_users.get_register_router(UserRead, UserCreate),
+        prefix="/auth",
+        tags=["auth"],
     )
 
-
-def create_refresh_token(*, sub: str) -> str:
-    return _create_token(
-        token_type="refresh_token",
-        lifetime=timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
-        sub=sub,
+    app.include_router(
+        fastapi_users.get_reset_password_router(),
+        prefix="/auth",
+        tags=["auth"],
     )
 
+    app.include_router(
+        fastapi_users.get_verify_router(UserRead),
+        prefix="/auth",
+        tags=["auth"],
+    )
 
-async def authenticate_user(
-    db: AsyncIOMotorClient, user_info: OAuthUser
-) -> OAuthUserInDB:
-    """Authenticate a user and return the user object.
+    app.include_router(
+        fastapi_users.get_users_router(UserRead, UserUpdate),
+        prefix="/users",
+        tags=["users"],
+    )
 
-    If the user does not exist, create a new user.
-    """
-    user_data = await db.users.find_one({"email": user_info.email})
-    last_login = datetime.now().isoformat()
-
-    if user_data:
-        user: OAuthUserInDB = await crud.update_user(
-            db, user_data["_id"], {"last_login": last_login}
-        )
-        return user
-    else:
-        new_user = NewOAuthUser.from_oauth_user(user_info)
-        user = await crud.create_user(db, new_user)
-        return user
-
-
-async def get_current_user(
-    access_token: HTTPAuthorizationCredentials = Depends(auth_scheme),
-    db: mongo.AsyncClient = Depends(mongo.get_db),
-) -> OAuthUserInDB:
-    try:
-        payload = jwt.decode(
-            access_token.credentials,
+    app.include_router(
+        fastapi_users.get_oauth_router(
+            google_oauth_client,
+            auth_backend,
             settings.AUTH_SECRET_KEY,
-            algorithms=[settings.AUTH_ALGORITHM],
-        )
-        sub = payload.get("sub")
-        if not sub:
-            raise_auth_failure("Invalid access token")
-        user = await crud.get_user(db, sub)
-        return user
-    except JWTError as e:
-        raise_auth_failure(str(e))
-
-
-async def get_new_access_token(refresh_token: str, db: AsyncIOMotorClient) -> str:
-    try:
-        payload = jwt.decode(
-            refresh_token,
-            settings.AUTH_SECRET_KEY,
-            algorithms=[settings.AUTH_ALGORITHM],
-        )
-        sub = payload.get("sub")
-        if not sub:
-            raise_auth_failure("Invalid refresh token")
-
-        user = await db.users.find_one({"sub": sub})
-        if not user:
-            raise_auth_failure("User not found")
-
-        return create_access_token(sub=sub)
-    except JWTError:
-        raise_auth_failure("Invalid refresh token")
+            redirect_url="http://localhost:3000/oauth-callback",
+            associate_by_email=True,
+            is_verified_by_default=True,  # Google OAuth validates email
+        ),
+        prefix="/auth/google",
+        tags=["auth"],
+    )

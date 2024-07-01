@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, UploadFile, HTTPException
 
 from core.config import Settings, get_settings
 from core.auth import get_current_user
+from core.db import User
 from core import crud
-from schema.auth import OAuthUserInDB
 from schema.documents import Document, DocumentMetadataUpload
-from schema.base import Response
 from services import docstore, mongo
+from schema.base import Response
 
 
 router = APIRouter()
@@ -25,7 +25,7 @@ default = {
 async def upload_document(
     file: UploadFile,
     metadata: DocumentMetadataUpload,
-    user: OAuthUserInDB = Depends(get_current_user),
+    user: User = Depends(get_current_user),
     s3: docstore.Client = Depends(docstore.create_client),
     db: mongo.AsyncClient = Depends(mongo.get_db),
     settings: Settings = Depends(get_settings),
@@ -46,7 +46,7 @@ async def upload_document(
 @router.delete("/{document_id}", response_model=Response)
 async def delete_document(
     document_id: str,
-    user: OAuthUserInDB = Depends(get_current_user),
+    user: User = Depends(get_current_user),
     s3: docstore.Client = Depends(docstore.create_client),
     db: mongo.AsyncClient = Depends(mongo.get_db),
     settings: Settings = Depends(get_settings),
@@ -63,7 +63,7 @@ async def delete_document(
 
 @router.get("")
 async def list_documents(
-    user: OAuthUserInDB = Depends(get_current_user),
+    user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> list[Document]:
     return await docstore.list_docs(user_id=user.id, db=db)
@@ -72,7 +72,7 @@ async def list_documents(
 @router.get("/{document_id}")
 async def get_document(
     document_id: str,
-    user: OAuthUserInDB = Depends(get_current_user),
+    user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> Document:
     return await docstore.get_doc(user_id=user.id, doc_id=document_id, db=db)
@@ -82,7 +82,7 @@ async def get_document(
 async def update_document(
     document_id: str,
     document_update: dict,
-    user: OAuthUserInDB = Depends(get_current_user),
+    user: User = Depends(get_current_user),
     db: mongo.AsyncClient = Depends(mongo.get_db),
 ) -> Response:
     try:
