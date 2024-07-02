@@ -3,11 +3,13 @@ import anthropic
 import lancedb
 import openai
 
-uri = "/home/muaddib/sietch/projects/NavigAItor/backend/data/user-documents"
+from core.config import settings
+
+VECTORDB_URI = settings.ROOT_DIR / "data" / "user-documents"
 
 
 async def get_db_tbl():
-    db = await lancedb.connect_async(uri)
+    db = await lancedb.connect_async(VECTORDB_URI)
     return await db.open_table("embedded_docs")
 
 

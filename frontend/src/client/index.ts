@@ -4,6 +4,7 @@ import type {
   ClientResponse,
   DocumentMetadata,
   User,
+  Document,
   LoginData,
   SignupData,
 } from "@/client/types";

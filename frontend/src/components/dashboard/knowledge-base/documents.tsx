@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import Card from "@/components/dashboard/card";
-
 import {
   Dialog,
   DialogContent,
@@ -17,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import Card from "@/components/dashboard/card";
 
 import Tooltip from "@/components/dashboard/tooltip";
 
@@ -37,7 +36,7 @@ const BadgeColors = {
     [DocumentType.RECORDING]: "bg-[#e9c46a]",
     [DocumentType.UPLOAD]: "bg-[#2a9d8f]",
   },
-  tags: "bg-[#2a9d8f]",
+  tags: "bg-[#e9795d]",
 };
 
 // TODO: dialog needs to get the document passed to it
@@ -68,31 +67,30 @@ const DocumentEntry = ({
     }
   };
 
-  const badge = (field: (typeof METADATA_FIELDS)[number]) => (
-    <Badge
-      className={
-        field.key === "document_type"
-          ? BadgeColors[field.key][document.metadata[field.key]]
-          : BadgeColors[field.key]
-      }
-    >
-      {field.key === "document_type"
-        ? document.metadata[field.key]
-        : `#${document.metadata[field.key]}`}
-    </Badge>
-  );
+  const badge = (field: string | string[]) => {
+    if (Array.isArray(field)) {
+      return field.map((item) => (
+        <Badge className={`${BadgeColors.tags} mx-1`} key={item}>
+          #{item}
+        </Badge>
+      ));
+    } else {
+      const label = field as DocumentType;
+      return (
+        <Badge className={`${BadgeColors.document_type[label]} mx-1`}>
+          {field}
+        </Badge>
+      );
+    }
+  };
 
   return (
     <TableRow onClick={handleRowClick}>
-      {METADATA_FIELDS.map((field) => {
-        return (
-          <TableCell key={field.key} className={field.className}>
-            {field.key === "document_type" || field.key === "tags"
-              ? badge(field)
-              : document.metadata[field.key]}
-          </TableCell>
-        );
-      })}
+      <TableCell key="name">{document.metadata["name"]}</TableCell>
+      <TableCell key="document_type">
+        {badge(document.metadata["document_type"])}
+      </TableCell>
+      <TableCell key="tags">{badge(document.metadata["tags"])}</TableCell>
       <TableCell>
         <Tooltip type="delete" onClick={handleDelete} />
       </TableCell>

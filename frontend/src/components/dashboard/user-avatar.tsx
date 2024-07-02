@@ -13,7 +13,7 @@ import { type SharedProps, Tabs } from "@/lib/utils";
 
 interface Props extends SharedProps {}
 
-export default function UserAvatar({ setActiveTab, user }: Props) {
+export default function UserAvatar({ setActiveTab }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

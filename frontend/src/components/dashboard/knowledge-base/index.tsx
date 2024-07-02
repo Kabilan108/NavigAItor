@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 
 import KnowledgeBaseOptions from "@/components/dashboard/knowledge-base/options";
 import Documents from "@/components/dashboard/knowledge-base/documents";
-import HideablePanel from "@/components/dashboard/hideable-panel";
+// import HideablePanel from "@/components/dashboard/hideable-panel";
 import Drawer from "@/components/dashboard/drawer";
 
 import { TabsTrigger, TabsList, TabsContent, Tabs } from "@/components/ui/tabs";
 
 import { type SharedProps } from "@/lib/utils";
-import type { Document } from "@/lib/utils";
+import type { Document } from "@/client/types";
 import { getDocuments } from "@/client";
 
 interface Props extends SharedProps {}
 
-const RightPanel = () => <HideablePanel children={<KnowledgeBaseOptions />} />;
+// const RightPanel = () => <HideablePanel children={<KnowledgeBaseOptions />} />;
 
 export const KnowledgeBaseDrawer = () => (
   <Drawer children={<KnowledgeBaseOptions />} />

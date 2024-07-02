@@ -73,3 +73,14 @@ export interface Chunk {
   text: string;
   image: string; // base64 encoded image
 }
+
+export enum Role {
+  ASSISTANT = "assistant",
+  SYSTEM = "system",
+  USER = "user",
+}
+
+export type Message = {
+  role: Role;
+  content: string;
+};

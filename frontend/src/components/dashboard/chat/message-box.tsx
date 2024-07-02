@@ -26,12 +26,15 @@ export default function MessageBox({ onSend }: Props) {
   };
 
   const handleAttachFile = async (event: React.MouseEvent) => {
+    console.log(event);
+
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = ".pdf";
     fileInput.multiple = false;
 
     fileInput.onchange = async (event) => {
+      console.log(event);
       const file = fileInput?.files?.[0];
       if (file) {
         console.log("Uploading file:", file);

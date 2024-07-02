@@ -7,8 +7,8 @@ import ChatOptions from "@/components/dashboard/chat/options";
 import Drawer from "@/components/dashboard/drawer";
 import { useChatContext } from "@/context/chat-provider";
 
-import { type Message_Input as MessageType, Role } from "@/generated";
-import { type SharedProps } from "@/lib/utils";
+import { type Message, Role } from "@/client/types";
+import type { SharedProps } from "@/lib/utils";
 import { sendChatMessage } from "@/client";
 import { Chunk } from "@/client/types";
 
@@ -25,18 +25,20 @@ const RightPanel = () => <HideablePanel children={<ChatOptions />} />;
 export const ChatDrawer = () => <Drawer children={<ChatOptions />} />;
 
 export function Chat(props: Props) {
+  console.log(props);
+
   const first_message = {
     role: Role.ASSISTANT,
     content:
       "Hello, I'm **Navigaitor**, your personal study assistant. How can I help you today?",
   };
 
-  const [messages, addMessage] = useState<(MessageType | AssistantMessage)[]>([
+  const [messages, addMessage] = useState<(Message | AssistantMessage)[]>([
     first_message,
   ]);
   const { setSources } = useChatContext();
 
-  const handleSendMessage = async (userMessage: MessageType) => {
+  const handleSendMessage = async (userMessage: Message) => {
     addMessage([...messages, userMessage]);
     const chat_history = messages.slice(1).concat(userMessage);
 

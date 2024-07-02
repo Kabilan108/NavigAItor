@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     API_PATH: str | None = "/api/v1"
     # SECRET_KEY: str
 
+    ROOT_DIR: Path = ROOT
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int | None = 60 * 24 * 8
     REFRESH_TOKEN_EXPIRE_DAYS: int | None = 7
     ALGORITHM: str | None = "HS256"
