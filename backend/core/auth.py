@@ -100,7 +100,7 @@ def mount_auth_endpoints(app: APIRouter):
             google_oauth_client,
             auth_backend,
             settings.AUTH_SECRET_KEY,
-            redirect_url="http://localhost:3000/oauth-callback",
+            redirect_url=f"{settings.CLIENT_URL}/oauth-callback",
             associate_by_email=True,
             is_verified_by_default=True,  # Google OAuth validates email
         ),
